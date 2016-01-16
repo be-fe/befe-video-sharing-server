@@ -1,0 +1,27 @@
+{
+  "name": "demo-player",
+  "version": "0.1.0",
+  "description": "A demo player for easily playing video clips ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/be-fe/demo-player.git"
+  },
+  "author": {
+    "name": "Liangliang Zheng"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/be-fe/demo-player/issues"
+  },
+  "homepage": "https://github.com/be-fe/demo-player#readme",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": "README.md",
+  "gitHead": "19c4c1a82b2169bcf18dd2ade933eeb0af52d13d",
+  "_id": "demo-player@0.1.0",
+  "_shasum": "4730a40747fe982bbbaa5f84c1df74b2b1960dfe",
+  "_from": "demo-player@*"
+}

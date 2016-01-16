@@ -1,0 +1,72 @@
+.demo-player div {
+    padding: 0;
+    margin: 0;
+}
+
+.demo-player video {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    background: black;
+}
+
+.demo-player video.current {
+    z-index: 90;
+}
+
+.demo-player .controls {
+    position: absolute;
+    bottom: 0;
+    z-index: 999;
+    width: 100%;
+    font-size: 0;
+}
+
+.demo-player .controls > div {
+    font-size: 1rem;
+    display: inline-block;
+    position: relative;
+}
+
+.demo-player .current-time {
+    width: 20px;
+}
+
+.demo-player .progress-bar-wrapper {
+    width: calc(100% - 40px);
+    height: 30px;
+    opacity: 0.2;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.demo-player .progress-bar-wrapper:hover {
+    opacity: 1;
+}
+
+.demo-player .progress-bar-wrapper .bar {
+    position: absolute;
+    margin-top: 12px;
+    height: 4px;
+    background: #555;
+    width: 100%;
+}
+
+.demo-player .progress-bar-wrapper .played {
+    position: absolute;
+    margin-top: 12px;
+    height: 4px;
+    background: #aaa;
+}
+
+.demo-player .progress-bar-wrapper .handle {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+    margin-left: -10px;
+    background: white;
+    border-radius: 20px;
+}
