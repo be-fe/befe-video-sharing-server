@@ -1,0 +1,20 @@
+{
+  "name": "befe-video-sharing-server",
+  "version": "0.1.0",
+  "homepage": "https://github.com/be-fe/befe-video-sharing-server",
+  "authors": [
+    "zhengliangliang <zhengliangliang@baidu.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "lodash": "~4.0.0"
+  }
+}

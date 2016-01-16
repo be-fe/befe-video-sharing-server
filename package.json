@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/be-fe/befe-video-sharing-server/issues"
   },
-  "homepage": "https://github.com/be-fe/befe-video-sharing-server#readme"
+  "homepage": "https://github.com/be-fe/befe-video-sharing-server#readme",
+  "dependencies": {
+    "demo-player": "^0.1.0",
+    "express": "^4.13.3",
+    "gulp": "^3.9.0",
+    "lodash": "^4.0.0"
+  }
 }
