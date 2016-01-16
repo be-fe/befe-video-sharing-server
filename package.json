@@ -1,0 +1,19 @@
+{
+  "name": "befe-video-sharing-server",
+  "version": "0.1.0",
+  "description": "Start a server for receiving/serving team video demos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/be-fe/befe-video-sharing-server.git"
+  },
+  "author": "Liangliang Zheng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/be-fe/befe-video-sharing-server/issues"
+  },
+  "homepage": "https://github.com/be-fe/befe-video-sharing-server#readme"
+}
