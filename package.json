@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/be-fe/befe-video-sharing-server#readme",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "demo-player": "^0.1.0",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
-    "lodash": "^4.0.0"
+    "lodash": "^4.0.0",
+    "st": "^1.1.0"
   }
 }
