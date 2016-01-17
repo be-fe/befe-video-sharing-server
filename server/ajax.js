@@ -1,3 +1,8 @@
+var fs = require('fs');
+var config = require('../common/config');
+var md5 = require('md5');
+
+var tokens = {};
 
 module.exports = {
     setup: function(app) {
@@ -15,13 +20,25 @@ module.exports = {
             console.log(body);
         });
 
+        app.use('/ajax/request-token', function(req, res) {
+            var token = md5(Math.random());
+            tokens[md5(token + config.tokenPass)] = new Date().getTime();
+            res.send(token);
+        });
+
         /*
             check if the file exists under video,
             with the body.filePath
          */
-        app.post('/ajax/check-file', function(req) {
+        app.post('/ajax/check-file', function(req, res) {
             var body = req.body;
 
+            console.log('checking file - ', req.body, config.path.videos + body.filePath);
+            if (fs.existsSync(config.path.videos + body.filePath)) {
+                res.send('yes');
+            } else {
+                res.send('no');
+            }
         });
     }
 };

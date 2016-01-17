@@ -5,7 +5,7 @@ var fs = require('fs');
 var app = express();
 
 var config = require('./common/config.js');
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('', function(req, res) {
     res.redirect('/index');
