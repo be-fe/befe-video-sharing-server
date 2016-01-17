@@ -23,7 +23,8 @@
     - 本系统, 将本地video文件, 很快的分割成为若干小的视频/音频/图片素材块 (由 [Video clipper] 完成)
 - 视频上传:
     - 利用 [Video clipper], 设置服务器信息与tokenPass, 快捷地将Demo素材上传至服务器
-- 服务器 [Video sharing server]:
+- 服务器:
+    - 主要组件: [Video sharing server]
     - 服务器利用 `express` 的 `st` 中间件, 廉价的将素材当成静态资源提供出来 (方便浏览器, 中间层的缓存)
     - 使用 [Demo player] 将素材整合成单一视频进行播放
     - 提供一些视频方面的管理
