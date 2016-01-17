@@ -1,4 +1,5 @@
 var fs = require('fs');
+var npath = require('path');
 
 module.exports = {
     // some util functions
