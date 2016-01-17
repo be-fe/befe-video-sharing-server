@@ -1,6 +1,6 @@
 ## Doc index
 
-For more information, please refer to [](./doc/index.md)
+For more information, please refer to [The doc index file](./doc/index.md)
 
 ## NOTES
 
