@@ -10,9 +10,9 @@
 
 ### 涉及组件
 
-- [Video sharing server][]
-- [Video clipper][]
-- [Demo player][]
+- [Video sharing server]
+- [Video clipper]
+- [Demo player]
 
 本系统, 将本地video文件, 很快的分割成为若干小的视频/音频/图片素材块 (由 [Video clipper][] 完成)
 
