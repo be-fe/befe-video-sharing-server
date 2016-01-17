@@ -14,10 +14,14 @@
 - [Video clipper]
 - [Demo player]
 
-本系统, 将本地video文件, 很快的分割成为若干小的视频/音频/图片素材块 (由 [Video clipper][] 完成)
+- Demo视频录取:
+    - 可以找一些录制视频的工具, 录制一些教程.
+    - 及其推荐 [Monosnap] 这款工具
+- 视频分割:
+    - 本系统, 将本地video文件, 很快的分割成为若干小的视频/音频/图片素材块 (由 [Video clipper] 完成)
 
 
-
+[Monosnap]: [what's this](http://google.com)
 [Video sharing server]: https://github.com/be-fe/befe-video-sharing-server
 [Video clipper]: https://github.com/be-fe/video-clipper
 [Demo player]: https://github.com/be-fe/demo-player
