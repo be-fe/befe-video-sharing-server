@@ -68,7 +68,7 @@
             return this.states.playHash[this.resolveTimeId(timeId).idIndex];
         },
         videoUrl: function (file, base) {
-            return this.opts.base + file;
+            return this.opts.baseUrl + file;
         },
         resetToNulls: function (object, keys) {
             keys.map(function (key) {

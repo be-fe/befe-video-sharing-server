@@ -2,10 +2,20 @@
 <html>
 <head>
     <script src="@context@/static/vendor/jquery/dist/jquery.js"></script>
+    <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
     <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
     <link rel="stylesheet" href="@context@/static/vendor/demo-player/dist/demo-player.css">
+    <script src="@context@/static/app/main.js"></script>
+    <link rel="stylesheet" href="@context@/static/app/main.css">
+    <script>
+        $(function() {
+            main.init({
+                context: '@context@'
+            });
+        });
+    </script>
 </head>
 <body>
-<h1>hello world</h1>
+    <div id="player"></div>
 </body>
 </html>

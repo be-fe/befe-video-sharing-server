@@ -3,6 +3,7 @@ var npath = require('path');
 var config = require('../common/config');
 var md5 = require('md5');
 var utils = require('./util/utils');
+var url = require('url');
 
 var multer = require('multer');
 var upload = multer({
@@ -13,6 +14,7 @@ var upload = multer({
 });
 
 var tokens = {}, tokenCount = 0;
+var videoInfo = utils.getVideoInfo();
 
 module.exports = {
     setup: function(app) {
@@ -90,6 +92,24 @@ module.exports = {
             }
         });
 
-        app.post('/ajax/')
+        app.post(config.params.context + '/ajax/touch-video', function(req, res) {
+            var videoHash = req.body.videoHash;
+            if (!videoInfo[videoHash]) {
+                videoInfo[videoHash] = {
+                    created: new Date().getTime()
+                };
+                utils.setVideoInfo(videoInfo);
+            }
+        });
+
+        app.get(config.params.context + '/ajax/video-list', function(req, res) {
+            var params =  url.parse(req.url, true).query;
+            if (params.video) {
+                var files = fs.readdirSync(config.path.videos + params.video + '/video/');
+                res.send(files);
+            } else {
+                res.send([]);
+            }
+        });
     }
 };

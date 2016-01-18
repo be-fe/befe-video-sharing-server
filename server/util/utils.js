@@ -1,5 +1,6 @@
 var fs = require('fs');
 var npath = require('path');
+var config = require('../../common/config');
 
 module.exports = {
     // some util functions
@@ -8,5 +9,19 @@ module.exports = {
             this.mkdir(npath.dirname(path));
             fs.mkdirSync(path);
         }
+    },
+    getVideoInfo: function() {
+        try {
+            var info = JSON.parse(fs.readFileSync(config.videoInfo).toString());
+        } catch(ex) {}
+        if (!info) {
+            info = this.setVideoInfo({});
+        }
+
+        return info;
+    },
+    setVideoInfo: function(info) {
+        fs.writeFileSync(config.videoInfo, JSON.stringify(info, null, '   '));
+        return info;
     }
 };
