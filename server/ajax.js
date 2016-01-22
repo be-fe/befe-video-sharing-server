@@ -14,7 +14,6 @@ var upload = multer({
 });
 
 var tokens = {}, tokenCount = 0;
-var videoInfo = utils.getVideoInfo();
 
 module.exports = {
     setup: function(app) {
@@ -92,15 +91,6 @@ module.exports = {
             }
         });
 
-        app.post(config.params.context + '/ajax/touch-video', function(req, res) {
-            var videoHash = req.body.videoHash;
-            if (!videoInfo[videoHash]) {
-                videoInfo[videoHash] = {
-                    created: new Date().getTime()
-                };
-                utils.setVideoInfo(videoInfo);
-            }
-        });
 
         app.get(config.params.context + '/ajax/video-list', function(req, res) {
             var params =  url.parse(req.url, true).query;

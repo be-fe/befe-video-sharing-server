@@ -15,12 +15,15 @@ module.exports = {
             var info = JSON.parse(fs.readFileSync(config.videoInfo).toString());
         } catch(ex) {}
         if (!info) {
-            info = this.setVideoInfo({});
+            info = this.setVideoInfo({
+                videoInfo: config.videoInfo
+            });
         }
 
         return info;
     },
     setVideoInfo: function(info) {
+        console.log(info, config.videoInfo);
         fs.writeFileSync(config.videoInfo, JSON.stringify(info, null, '   '));
         return info;
     }
