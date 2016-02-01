@@ -4,6 +4,7 @@ var npath = require('path');
 var config = {
     port: 3333,
     params: {
+        // remember to include '/' if you want to specify a context
         context: ''
     },
     maxFileContentLength: 20 * 1024 * 1024,

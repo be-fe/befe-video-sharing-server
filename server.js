@@ -8,10 +8,10 @@ var config = require('./common/config.js');
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('', function(req, res) {
-    res.redirect('/index');
+    res.redirect(config.params.context + '/index');
 });
 app.get('/static/index.html', function(req, res) {
-    res.redirect('/index');
+    res.redirect(config.params.context + '/index');
 });
 
 app.get('/index', function(req, res) {
