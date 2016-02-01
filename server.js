@@ -29,12 +29,12 @@ require('./server/ajax').setup(app);
 
 app.use(new st({
     path: './videos',
-    url: config.params.context + '/videos'
+    url: '/videos'
 }));
 
 app.use(new st({
     path: './static',
-    url: config.params.context + '/static',
+    url: '/static',
     cache: false
 }));
 

@@ -26,7 +26,7 @@ module.exports = {
             all files should be sent to tmp-files/ first, and then be moved to
             video
          */
-        app.post(config.params.context + '/ajax/upload-file',
+        app.post('/ajax/upload-file',
             upload.single('content'),
             function(req, res) {
             var body = req.body;
@@ -61,7 +61,7 @@ module.exports = {
             //console.log(body);
         });
 
-        app.use(config.params.context + '/ajax/request-token', function(req, res) {
+        app.use('/ajax/request-token', function(req, res) {
             var token = md5(Math.random());
             var hash = md5(token + config.tokenPass);
 
@@ -80,7 +80,7 @@ module.exports = {
             check if the file exists under video,
             with the body.filePath
          */
-        app.post(config.params.context + '/ajax/check-file', function(req, res) {
+        app.post('/ajax/check-file', function(req, res) {
             var body = req.body;
 
             console.log('checking file - ', req.body, config.path.videos + body.filePath);
@@ -92,7 +92,7 @@ module.exports = {
         });
 
 
-        app.get(config.params.context + '/ajax/video-list', function(req, res) {
+        app.get('/ajax/video-list', function(req, res) {
             var params =  url.parse(req.url, true).query;
             if (params.video) {
                 var files = fs.readdirSync(config.path.videos + params.video + '/video/');
