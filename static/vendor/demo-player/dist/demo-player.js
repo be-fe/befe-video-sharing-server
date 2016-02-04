@@ -27,6 +27,15 @@
             });
             return hash;
         },
+        trySetDurationOfLastClip: function(duration, clipIndex) {
+            if (!states.lastDurationSet && clipIndex == states.playList.length - 1) {
+                var opts = this.opts;
+
+                states.lastDuration = duration;
+                states.lastDurationSet = true;
+                states.total = states.total - opts.duration + duration;
+            }
+        },
         resolveTimeId: function (timeId) {
             var opts = this.opts;
             var states = this.states;
@@ -177,6 +186,7 @@
         initVideoEvents: function (video) {
             var self = this;
             video.addEventListener('loadeddata', function () {
+                methods.trySetDurationOfLastClip(video.duration, video.clipIndex);
                 video.playSecondOnLoaded && video.playSecondOnLoaded();
             });
 
@@ -190,15 +200,15 @@
                 //    states.total
                 //);
 
-                self.setPercentage(video.timeId + video.currentTime, video.duration)
+                self.setPercentage(video.timeId + video.currentTime)
             });
         },
-        setPercentage: function (timeId, currentDuration) {
+        setPercentage: function (timeId) {
             var opts = this.opts;
             var second = methods.timeIdToSecond(timeId);
-            var percetage = second >= 0 ? (second / (states.total - opts.duration + currentDuration)) * 100 + '%' : '100%';
-            states.$handle.css('left', percetage);
-            states.$played.css('width', percetage);
+            var percentage = second >= 0 ? (second / states.total) * 100 + '%' : '100%';
+            states.$handle.css('left', percentage);
+            states.$played.css('width', percentage);
         },
         setPlayList: function (playList, baseUrl) {
             var opts = this.opts;
@@ -233,6 +243,7 @@
             } else {
                 vcurr.src = methods.videoUrl(clip.clip);
                 vcurr.timeId = clip.timeId;
+                vcurr.clipIndex = clip.index;
 
                 if (timeIdObject.second) {
                     vcurr.load();
@@ -263,6 +274,7 @@
             var vnext = states.vnext;
             vnext.src = methods.videoUrl(nextClip.clip);
             vnext.timeId = nextClip.timeId;
+            vnext.clipIndex = nextClip.index;
             vnext.load();
 
             return this;
