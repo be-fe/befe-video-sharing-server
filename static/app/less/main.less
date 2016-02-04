@@ -1,0 +1,99 @@
+body, div {
+   margin: 0;
+   padding: 0;
+ }
+
+@sidebar-width: 280px;
+@transition-time: 300ms;
+@transition-time-long: @transition-time*2;
+
+@color-text: #333;
+
+body {
+  @color-background: #333;
+  color: @color-text;
+  background: @color-background;
+}
+
+#player {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  //transition: left @transition-time, width @transition-time;
+  z-index: 100;
+}
+
+#sidebar {
+  top: 0;
+  left: -@sidebar-width;
+  transition: left @transition-time-long ease-out;
+  width: @sidebar-width;
+  height: 100vh;
+  position: absolute;
+  z-index: 200;
+
+  background: #f5f5f5;
+  border-right: #eee;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+
+  .video-list-wrapper {
+    overflow: auto;
+    height: 100%;
+  }
+
+  a.video {
+    display: block;
+    text-decoration: none;
+    color: @color-text;
+    margin: 15px;
+  }
+
+  // 内个sidebar的展开收缩手柄
+  .handle {
+    @handle-width: 30px;
+    @handle-width-half: @handle-width / 2;
+    @color-handle: @color-text;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    top: 0;
+    width: @handle-width;
+    height: @handle-width;
+    line-height: @handle-width;
+
+    border-radius: @handle-width/2;
+    margin-top: ~"calc(50vh - @{handle-width-half})";
+    right: -@handle-width*1.5;
+    position: absolute;
+    font-family: monospace;
+    background: rgba(245,245,245, 0.8);
+    opacity: 0.2;
+    text-align: center;
+    transition: opacity @transition-time, transform @transition-time, -webkit-transform @transition-time;
+    box-shadow: -2px -1px 2px -1px rgba(0,0,0,0.1);
+    cursor: pointer;
+    color: @color-handle;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.sidebar-shown {
+  #player {
+    left: @sidebar-width;
+    width: ~"calc(100vw - @{sidebar-width})";
+  }
+
+  #sidebar {
+    left: 0;
+  }
+
+  .handle {
+    transform: rotateZ(180deg);
+    -webkit-transform: rotateZ(180deg);
+  }
+}

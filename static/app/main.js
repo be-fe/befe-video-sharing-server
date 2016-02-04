@@ -1,9 +1,15 @@
 ;
 (function ($, _, g) {
+    'use strict';
 
     var vars = {
         context: ''
     };
+
+    var tpls = _.reduce(g.rawTpls, function(result, curr, key) {
+        result[key] = _.template(curr, {variable: 'd'});
+        return result;
+    }, {});
 
     var methods = {
         parseHashParams: function (paramString) {
@@ -37,18 +43,16 @@
         },
 
         isManualHashChange: false,
-        manualHashChangeTimer: null,
-        manualChangeHash: function() {
+        manualChangeHash: function(hash) {
             this.isManualHashChange = true;
-            clearTimeout(this.manualHashChangeTimer);
-            this.manualHashChangeTimer = setTimeout(function() {
-                this.isManualHashChange = false;
-            }, 12);
+            location.hash = hash;
         },
         onHashChange: function(callback) {
             $(window).on('hashchange', function() {
                 if (!this.isManualHashChange) {
                     callback && callback();
+                } else {
+                    this.isManualHashChange = false;
                 }
             });
 
@@ -58,8 +62,27 @@
 
         url: function(path) {
             return vars.context + path;
+        },
+
+        loadVideos: function() {
+
+
+            $.post(methods.url('/ajax/all-videos'), function(videos) {
+                console.log('all videos: ', videos);
+
+                videos.forEach(function(videoKey) {
+                    var video = tpls.sidebarVideo({
+                        videoKey: videoKey,
+                        videoText: videoKey.split('_').join(' ')
+                    });
+
+                    $els.videoList.append(video);
+                });
+            });
         }
     };
+
+    var $els = {};
 
     var main = {
         init: function (opts) {
@@ -68,10 +91,18 @@
             var player = new ClipPlayer();
             player.init($('#player'));
 
+            $els.sidebar = $('#sidebar');
+            $els.body = $(document.body);
+            $els.videoList = $els.sidebar.find('.video-list');
+
+            var initParams = methods.parseHashParams();
+
+            $els.body.toggleClass('sidebar-shown', !initParams.video);
+
             methods.onHashChange(function() {
                 var params = methods.parseHashParams();
 
-                $.get(methods.url('/ajax/video-list'), {
+                $.post(methods.url('/ajax/video-list'), {
                     video: params.video
                 }, function(clipList) {
                     player.setPlayList(clipList, methods.url('/videos/' + params.video + '/video/'));
@@ -80,6 +111,16 @@
 
                 // 目标params - {video, t, search}
                 console.log(params);
+            });
+
+            methods.loadVideos();
+
+            this.initPage();
+        },
+        initPage: function() {
+
+            $els.sidebar.on('click', '.handle', function() {
+                $els.body.toggleClass('sidebar-shown');
             });
         }
     };

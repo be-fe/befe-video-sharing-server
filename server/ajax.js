@@ -4,6 +4,7 @@ var config = require('../common/config');
 var md5 = require('md5');
 var utils = require('./util/utils');
 var url = require('url');
+var _ = require('lodash');
 
 var multer = require('multer');
 var upload = multer({
@@ -92,14 +93,26 @@ module.exports = {
         });
 
 
-        app.get('/ajax/video-list', function(req, res) {
-            var params =  url.parse(req.url, true).query;
+        app.post('/ajax/video-list', function(req, res) {
+            var params = req.body;
+            console.log(req.body);
             if (params.video) {
-                var files = fs.readdirSync(config.path.videos + params.video + '/video/');
+                var files = _.filter(fs.readdirSync(config.path.videos + params.video + '/video/'), function(file) {
+                    return file.substr(0, 1) != '.';
+                });
                 res.send(files);
             } else {
                 res.send([]);
             }
+        });
+
+        app.post('/ajax/all-videos', function(req, res) {
+            var videos = fs.readdirSync(config.path.videos);
+
+            var videos = _.filter(videos, function(file) {
+                return file.substr(0, 1) != '.';
+            });
+            res.send(videos);
         });
     }
 };

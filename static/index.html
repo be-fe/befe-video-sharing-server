@@ -5,8 +5,9 @@
     <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
     <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
     <link rel="stylesheet" href="@context@/static/vendor/demo-player/dist/demo-player.css">
+    <script src="@context@/static/app/tpls.js"></script>
     <script src="@context@/static/app/main.js"></script>
-    <link rel="stylesheet" href="@context@/static/app/main.css">
+    <link rel="stylesheet" href="@context@/static/app/css/main.css">
     <script>
         $(function() {
             main.init({
@@ -15,7 +16,17 @@
         });
     </script>
 </head>
-<body>
+<body class="sidebar-shown">
     <div id="player"></div>
+    <div id="sidebar">
+        <div class="video-list-wrapper">
+            <div class="video-list">
+
+            </div>
+        </div>
+        <div class="handle">
+            &gt;
+        </div>
+    </div>
 </body>
 </html>
