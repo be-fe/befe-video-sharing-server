@@ -215,6 +215,7 @@
         },
         setPlayList: function (playList, baseUrl) {
             var opts = this.opts;
+            states.lastDurationSet = false;
             states.playList = playList;
             states.playHash = methods.processPlayListHash(playList);
             states.total = playList.length * this.opts.duration;
