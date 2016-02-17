@@ -71,3 +71,16 @@ body {
   transform: rotateZ(180deg);
   -webkit-transform: rotateZ(180deg);
 }
+.vex-content input {
+  width: 100%;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px transparent solid;
+  padding: 4px 5px;
+  margin: 5px 0 5px;
+}
+.vex-content input:focus {
+  border-color: #81AADA;
+  outline: none;
+}

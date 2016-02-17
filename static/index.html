@@ -1,20 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="@context@/static/vendor/jquery/dist/jquery.js"></script>
-    <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
-    <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
     <link rel="stylesheet" href="@context@/static/vendor/demo-player/dist/demo-player.css">
-    <script src="@context@/static/app/tpls.js"></script>
-    <script src="@context@/static/app/main.js"></script>
+    <link rel="stylesheet" href="@context@/static/vendor/fontawesome/css/font-awesome.css">
+    <link rel="stylesheet" href="@context@/static/vendor/vex/css/vex.css">
+    <link rel="stylesheet" href="@context@/static/vendor/vex/css/vex-theme-default.css">
     <link rel="stylesheet" href="@context@/static/app/css/main.css">
-    <script>
-        $(function() {
-            main.init({
-                context: '@context@'
-            });
-        });
-    </script>
 </head>
 <body class="sidebar-shown">
     <div id="player"></div>
@@ -27,6 +18,25 @@
         <div class="handle">
             &gt;
         </div>
+    </div>
+
+    <div id="script">
+        <script src="@context@/static/vendor/jquery/dist/jquery.js"></script>
+        <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
+        <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
+        <script src="@context@/static/vendor/vex/js/vex.js"></script>
+        <script src="@context@/static/vendor/vex/js/vex.dialog.js"></script>
+        <script src="@context@/static/app/tpls.js"></script>
+        <script src="@context@/static/app/main.js"></script>
+        <script>
+            vex.defaultOptions.className = 'vex-theme-default';
+
+            $(function() {
+                main.init({
+                    context: '@context@'
+                });
+            });
+        </script>
     </div>
 </body>
 </html>

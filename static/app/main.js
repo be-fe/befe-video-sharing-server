@@ -115,7 +115,24 @@
             methods.loadVideos();
 
             this.initPage();
+
+            main.openAdminDialog();
         },
+
+        openAdminDialog: function() {
+            vex.dialog.open({
+                message: '做任何修改操作前请先输入管理员token',
+                input: tpls.adminToken(),
+                callback: function(data) {
+                    if (data) {
+
+                    }
+                }
+            });
+
+            $('[name=admin-token]').focus();
+        },
+
         initPage: function() {
 
             $els.sidebar.on('click', '.handle', function() {
@@ -124,4 +141,5 @@
         }
     };
     g.main = g.main || main;
+
 })(jQuery, _, window);
