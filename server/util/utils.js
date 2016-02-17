@@ -3,6 +3,12 @@ var npath = require('path');
 var config = require('../../common/config');
 
 module.exports = {
+    processConfig: function(config) {
+        var self = this;
+        self.mkdir(config.path.data);
+        self.mkdir(config.path.videos);
+        self.mkdir(config.path.tmpFiles);
+    },
     // some util functions
     mkdir: function(path) {
         if (!fs.existsSync(path)) {

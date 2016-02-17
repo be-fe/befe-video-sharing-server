@@ -106,6 +106,11 @@ module.exports = {
             }
         });
 
+        app.post('/ajax/video-info', function(req, res) {
+            var params = req.body;
+
+        });
+
         app.post('/ajax/all-videos', function(req, res) {
             var videos = fs.readdirSync(config.path.videos);
 
