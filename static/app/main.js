@@ -65,18 +65,17 @@
         },
 
         loadVideos: function() {
-
-
             $.post(methods.url('/ajax/all-videos'), function(videos) {
                 console.log('all videos: ', videos);
 
-                videos.forEach(function(videoKey) {
-                    var video = tpls.sidebarVideo({
-                        videoKey: videoKey,
-                        videoText: videoKey.split('_').join(' ')
+                videos.forEach(function(video) {
+
+                    var videoHtml = tpls.sidebarVideo({
+                        videoKey: video.key,
+                        videoText: video.name.split('_').join(' ')
                     });
 
-                    $els.videoList.append(video);
+                    $els.videoList.append(videoHtml);
                 });
             });
         }

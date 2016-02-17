@@ -14,10 +14,14 @@ var upload = multer({
     }
 });
 
+var videoLogic = require('./controller/video-controller');
+videoLogic.init(config);
+
 var tokens = {}, tokenCount = 0;
 
 module.exports = {
     setup: function(app) {
+
         /*
           /ajax/upload-file requires:
             body:
@@ -106,16 +110,19 @@ module.exports = {
             }
         });
 
-        app.post('/ajax/video-info', function(req, res) {
-            var params = req.body;
-
-        });
-
         app.post('/ajax/all-videos', function(req, res) {
             var videos = fs.readdirSync(config.path.videos);
+            var videoInfo = videoLogic.readVideoInfo();
 
             var videos = _.filter(videos, function(file) {
                 return file.substr(0, 1) != '.';
+            }).map(function(videoKey) {
+                var videoName = videoInfo.names[videoKey] || videoKey;
+
+                return {
+                    key: videoKey,
+                    name: videoName
+                }
             });
             res.send(videos);
         });
