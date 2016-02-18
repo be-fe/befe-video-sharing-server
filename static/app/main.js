@@ -116,7 +116,7 @@
 
             this.initPage();
 
-            main.openAdminDialog();
+            // main.openAdminDialog();
         },
 
         openAdminDialog: function() {
