@@ -3,7 +3,8 @@
     'use strict';
 
     var vars = {
-        context: ''
+        context: '',
+        adminToken: ''
     };
 
     var tpls = _.reduce(g.rawTpls, function(result, curr, key) {
@@ -78,6 +79,18 @@
                     $els.videoList.append(videoHtml);
                 });
             });
+        },
+
+        localStorageKey: 'befe_video_sharing_',
+        setItem: function(key, data) {
+            localStorage.setItem(this.localStorageKey + key, JSON.stringify(data));
+        },
+        getItem: function(key) {
+            var data = null;
+            try {
+                data = JSON.parse(localStorage.getItem(this.localStorageKey + key));
+            } catch(ex) {}
+            return data;
         }
     };
 
@@ -116,7 +129,22 @@
 
             this.initPage();
 
-            main.openAdminDialog();
+            // main.openAdminDialog();
+            main.openRenameVideo({
+                key: '123',
+                name: '321'
+            });
+        },
+
+        openRenameVideo: function(video) {
+            vex.dialog.open({
+                message: '修改视频',
+                input: tpls.editVideo({
+                    videoKey: video.key,
+                    videoName: video.name
+                }),
+                callback: function(data) {}
+            });
         },
 
         openAdminDialog: function() {
@@ -125,7 +153,7 @@
                 input: tpls.adminToken(),
                 callback: function(data) {
                     if (data) {
-
+                        methods.setItem('admin_token', data['admin-token']);
                     }
                 }
             });

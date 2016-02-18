@@ -17,6 +17,7 @@ app.get('/static/index.html', function(req, res) {
 app.get('/index', function(req, res) {
     var fileContent = fs.readFileSync('./static/index.html').toString();
     res.send(fileContent.replace(/@([^@]+)@/g, function(match, key) {
+        console.log(key);
         if (config.params[key]) {
             return config.params[key];
         } else {

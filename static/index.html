@@ -26,6 +26,7 @@
         <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
         <script src="@context@/static/vendor/vex/js/vex.js"></script>
         <script src="@context@/static/vendor/vex/js/vex.dialog.js"></script>
+        <script src="@context@/static/vendor/md5/src/md5.js"></script>
         <script src="@context@/static/app/tpls.js"></script>
         <script src="@context@/static/app/main.js"></script>
         <script>
@@ -33,7 +34,8 @@
 
             $(function() {
                 main.init({
-                    context: '@context@'
+                    context: '@context@',
+                    tokenSalt: '@tokenSalt@'
                 });
             });
         </script>

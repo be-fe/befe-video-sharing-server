@@ -42,11 +42,23 @@ body {
     height: 100%;
   }
 
+  .edit {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    opacity: 0.2;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   a.video {
     display: block;
     text-decoration: none;
     color: @color-text;
     margin: 15px;
+    position: relative;
   }
 
   // 内个sidebar的展开收缩手柄
@@ -112,6 +124,15 @@ body {
     &:focus {
       border-color: @color-focus-input;
       outline: none;
+    }
+  }
+
+  .row {
+    margin: 20px 0;
+
+    label {
+      margin: 0 0 10px;
+      display: inline-block;
     }
   }
 }

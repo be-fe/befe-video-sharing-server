@@ -29,11 +29,21 @@ body {
   overflow: auto;
   height: 100%;
 }
+#sidebar .edit {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  opacity: 0.2;
+}
+#sidebar .edit:hover {
+  opacity: 1;
+}
 #sidebar a.video {
   display: block;
   text-decoration: none;
   color: #333;
   margin: 15px;
+  position: relative;
 }
 #sidebar .handle {
   -webkit-user-select: none;
@@ -83,4 +93,11 @@ body {
 .vex-content input:focus {
   border-color: #81AADA;
   outline: none;
+}
+.vex-content .row {
+  margin: 20px 0;
+}
+.vex-content .row label {
+  margin: 0 0 10px;
+  display: inline-block;
 }
