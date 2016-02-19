@@ -44,9 +44,12 @@ body {
 
   .edit {
     position: absolute;
-    top: 5px;
+    top: 0px;
     right: 0;
     opacity: 0.2;
+    background: #f5f5f5;
+    padding: 3px 5px;
+    border-radius: 3px;
 
     &:hover {
       opacity: 1;
@@ -59,6 +62,7 @@ body {
     color: @color-text;
     margin: 15px;
     position: relative;
+    word-break: break-all;
   }
 
   // 内个sidebar的展开收缩手柄
@@ -112,6 +116,10 @@ body {
 }
 
 .vex-content {
+  .vex-dialog-message {
+    word-break: break-all;
+  }
+
   input {
     width: 100%;
     line-height: 24px;

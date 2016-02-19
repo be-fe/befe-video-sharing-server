@@ -4,7 +4,7 @@
 
     var vars = {
         context: '',
-        adminToken: ''
+        tokenSalt: ''
     };
 
     var tpls = _.reduce(g.rawTpls, function(result, curr, key) {
@@ -76,7 +76,9 @@
                         videoText: video.name.split('_').join(' ')
                     });
 
-                    $els.videoList.append(videoHtml);
+                    var $video = $(videoHtml);
+                    $video.data('video', video);
+                    $els.videoList.append($video);
                 });
             });
         },
@@ -130,26 +132,50 @@
             this.initPage();
 
             // main.openAdminDialog();
-            main.openRenameVideo({
-                key: '123',
-                name: '321'
-            });
         },
 
-        openRenameVideo: function(video) {
-            vex.dialog.open({
+        openEditVideo: function(video) {
+            var self = this;
+
+            var dialogId = $(vex.dialog.open({
                 message: '修改视频',
                 input: tpls.editVideo({
                     videoKey: video.key,
                     videoName: video.name
                 }),
-                callback: function(data) {}
+                callback: function(data) {
+
+                }
+            })).data().vex.id;
+
+            $('#edit-video').on('click', '.remove-video', function(e) {
+                console.log('remove video ', video);
+
+                vex.dialog.confirm({
+                    message: '是否确认删除视频 : ' + video.name + ' #id(' + video.key + ') ?',
+                    callback: function(data) {
+                        if (data) {
+                            $.post(methods.url('/ajax/remove-video'), {
+                                tokenHash : md5(methods.getItem('admin_token') + vars.tokenSalt),
+                                videoKey : video.key
+                            }, function(result) {
+                                if (result != 'ok') {
+                                    vars.tokenSalt = result;
+                                    self.openAdminDialog();
+                                } else {
+                                    $els.videoList.find('[video-key=' + video.key + ']').remove();
+                                    vex.close(dialogId);
+                                }
+                            });
+                        }
+                    }
+                });
             });
         },
 
         openAdminDialog: function() {
             vex.dialog.open({
-                message: '做任何修改操作前请先输入管理员token',
+                message: '做任何修改操作前请先输入管理员token, 请联系 zhengliangliang@baidu.com',
                 input: tpls.adminToken(),
                 callback: function(data) {
                     if (data) {
@@ -162,9 +188,18 @@
         },
 
         initPage: function() {
+            var self = this;
 
             $els.sidebar.on('click', '.handle', function() {
                 $els.body.toggleClass('sidebar-shown');
+            });
+
+            $els.videoList.on('click', '.edit', function(e) {
+                var $a = $(this).parent();
+                self.openEditVideo($a.data('video'));
+
+                e.stopPropagation();
+                e.preventDefault();
             });
         }
     };

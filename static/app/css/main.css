@@ -31,9 +31,12 @@ body {
 }
 #sidebar .edit {
   position: absolute;
-  top: 5px;
+  top: 0px;
   right: 0;
   opacity: 0.2;
+  background: #f5f5f5;
+  padding: 3px 5px;
+  border-radius: 3px;
 }
 #sidebar .edit:hover {
   opacity: 1;
@@ -44,6 +47,7 @@ body {
   color: #333;
   margin: 15px;
   position: relative;
+  word-break: break-all;
 }
 #sidebar .handle {
   -webkit-user-select: none;
@@ -80,6 +84,9 @@ body {
 .sidebar-shown .handle {
   transform: rotateZ(180deg);
   -webkit-transform: rotateZ(180deg);
+}
+.vex-content .vex-dialog-message {
+  word-break: break-all;
 }
 .vex-content input {
   width: 100%;

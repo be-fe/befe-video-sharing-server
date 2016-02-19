@@ -4,7 +4,11 @@ var config = require('../common/config');
 var md5 = require('md5');
 var utils = require('./util/utils');
 var url = require('url');
+var rmdir = require( 'rmdir' );
+
 var _ = require('lodash');
+
+var SP = npath.sep;
 
 var multer = require('multer');
 var upload = multer({
@@ -107,6 +111,30 @@ module.exports = {
                 res.send(files);
             } else {
                 res.send([]);
+            }
+        });
+
+        var adminToken = null;
+        var checkAdminToken = function(tokenHash) {
+            if (!adminToken) {
+                adminToken = fs.readFileSync(config.path.adminTokenFile).toString();
+            }
+
+            if (md5(adminToken + config.params.tokenSalt) == tokenHash) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        app.post('/ajax/remove-video', function(req, res) {
+            var params = req.body;
+            if (checkAdminToken(params.tokenHash)) {
+                console.log(config.path.videos + SP + params.videoKey);
+                //rmdir(config.path.videos + SP + params.videoKey);
+                res.send('ok');
+            } else {
+                res.send(config.params.tokenSalt);
             }
         });
 
