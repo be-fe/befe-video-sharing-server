@@ -2,7 +2,8 @@
 (function () {
     var fs = require('fs');
     var config;
-
+    var npath = require('path');
+    var SP = npath.sep;
     var locals = {};
 
     var videoLogic = {
@@ -20,6 +21,13 @@
                 json = JSON.parse(fs.readFileSync(path));
             } catch (ex) { }
             return json;
+        },
+        readJsonOrCreate: function(path, defaultValue) {
+            var json = this.readJson(path);
+            if (!json) {
+                this.dumpJson(path, defaultValue);
+            }
+            return defaultValue;
         },
         readVideoInfo: function() {
             var self = this;
@@ -42,6 +50,21 @@
             var videoNames = videoInfo.names;
             videoNames[videoKey] = videoName;
             videoLogic.writeVideoInfo(videoInfo);
+        },
+        getSingleVideoInfoPath: function(videoKey) {
+            return config.path.videos + SP + videoKey + SP + 'single-video-info.json';
+        },
+        readSingleVideoInfo: function(videoKey) {
+            var self = this;
+            var singleVideoInfo = self.readJsonOrCreate(self.getSingleVideoInfoPath(videoKey), {
+                tags: []
+            });
+            return singleVideoInfo;
+        },
+        writeSingleVideoInfo: function(videoKey, singleVideoInfo) {
+            var self = this;
+
+            self.dumpJson(self.getSingleVideoInfoPath(videoKey), singleVideoInfo);
         }
     };
 

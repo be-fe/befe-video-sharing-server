@@ -8,37 +8,55 @@
     <link rel="stylesheet" href="@context@/static/app/css/main.css">
 </head>
 <body class="sidebar-shown">
-    <div id="player"></div>
-    <div id="sidebar">
-        <div class="video-list-wrapper">
+<div id="player"></div>
+<div id="sidebar">
+    <div class="video-list-wrapper">
+        <div class="tabs table-container">
+            <div class="table-row">
+                <div class="tab table-cell">所有视频</div>
+                <div class="tab table-cell">本视频大纲</div>
+            </div>
+        </div>
+        <div class="all-videos">
+            <div class="search-bar-wrapper">
+                <input type="text" class="search-bar" placeholder="筛选关键词 (可用空格分割)"/>
+            </div>
             <div class="video-list">
 
             </div>
         </div>
-        <div class="handle">
-            &gt;
+        <div class="current-video">
+            <div class="tag-wrapper">
+                <label id="current-time"></label>
+                <a class="video-button add-video-tag">添加</a>
+            </div>
+            <div class="tag-list"></div>
         </div>
     </div>
-
-    <div id="script">
-        <script src="@context@/static/vendor/jquery/dist/jquery.js"></script>
-        <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
-        <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
-        <script src="@context@/static/vendor/vex/js/vex.js"></script>
-        <script src="@context@/static/vendor/vex/js/vex.dialog.js"></script>
-        <script src="@context@/static/vendor/md5/src/md5.js"></script>
-        <script src="@context@/static/app/tpls.js"></script>
-        <script src="@context@/static/app/main.js"></script>
-        <script>
-            vex.defaultOptions.className = 'vex-theme-default';
-
-            $(function() {
-                main.init({
-                    context: '@context@',
-                    tokenSalt: '@tokenSalt@'
-                });
-            });
-        </script>
+    <div class="handle">
+        &gt;
     </div>
+</div>
+
+<div id="script">
+    <script src="@context@/static/vendor/jquery/dist/jquery.js"></script>
+    <script src="@context@/static/vendor/lodash/dist/lodash.js"></script>
+    <script src="@context@/static/vendor/demo-player/dist/demo-player.js"></script>
+    <script src="@context@/static/vendor/vex/js/vex.js"></script>
+    <script src="@context@/static/vendor/vex/js/vex.dialog.js"></script>
+    <script src="@context@/static/vendor/md5/src/md5.js"></script>
+    <script src="@context@/static/app/tpls.js"></script>
+    <script src="@context@/static/app/main.js"></script>
+    <script>
+        vex.defaultOptions.className = 'vex-theme-default';
+
+        $(function () {
+            main.init({
+                context: '@context@',
+                tokenSalt: '@tokenSalt@'
+            });
+        });
+    </script>
+</div>
 </body>
 </html>

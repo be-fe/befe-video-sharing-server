@@ -4,14 +4,43 @@ div {
   padding: 0;
 }
 body {
+  overflow: hidden;
+}
+body {
   color: #333;
   background: #333;
+}
+.input-styles {
+  width: 100%;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px transparent solid;
+  padding: 4px 5px;
+  margin: 5px 0 5px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
+  transition: all 500ms;
+}
+.input-styles:focus {
+  border-color: #81AADA;
 }
 #player {
   width: 100vw;
   height: 100vh;
   position: relative;
   z-index: 100;
+}
+.table-container {
+  display: table;
+  width: 100%;
+}
+.table-container .table-row {
+  display: table-row;
+}
+.table-container .table-row .table-cell {
+  display: table-cell;
 }
 #sidebar {
   top: 0;
@@ -25,9 +54,44 @@ body {
   border-right: #eee;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 }
+#sidebar .all-videos {
+  display: none;
+}
+#sidebar .tabs {
+  margin-bottom: 10px;
+}
+#sidebar .tabs .tab {
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 300ms;
+}
+#sidebar .tabs .tab:hover {
+  background: #40aded;
+  color: #fff;
+}
 #sidebar .video-list-wrapper {
   overflow: auto;
   height: 100%;
+}
+#sidebar input {
+  width: 100%;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px transparent solid;
+  padding: 4px 5px;
+  margin: 5px 0 5px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
+  transition: all 500ms;
+  width: 95%;
+  margin: 8px auto;
+  display: block;
+}
+#sidebar input:focus {
+  border-color: #81AADA;
 }
 #sidebar .edit {
   position: absolute;
@@ -48,6 +112,9 @@ body {
   margin: 15px;
   position: relative;
   word-break: break-all;
+}
+#sidebar a.video[filter-hidden=true] {
+  display: none;
 }
 #sidebar .handle {
   -webkit-user-select: none;
@@ -74,6 +141,12 @@ body {
 #sidebar .handle:hover {
   opacity: 1;
 }
+.video-tag-shown #sdiebar .all-videos {
+  display: block;
+}
+.video-tag-shown #sdiebar .current-video {
+  display: none;
+}
 .sidebar-shown #player {
   left: 280px;
   width: calc(100vw - 280px);
@@ -88,18 +161,9 @@ body {
 .vex-content .vex-dialog-message {
   word-break: break-all;
 }
-.vex-content input {
-  width: 100%;
-  line-height: 24px;
-  font-size: 18px;
-  border-radius: 3px;
-  border: 1px transparent solid;
-  padding: 4px 5px;
-  margin: 5px 0 5px;
-}
-.vex-content input:focus {
-  border-color: #81AADA;
-  outline: none;
+.vex-content .vex-dialog-form .vex-dialog-input input[type="text"] {
+  box-shadow: none;
+  border-width: 1px;
 }
 .vex-content .row {
   margin: 20px 0;
@@ -107,4 +171,63 @@ body {
 .vex-content .row label {
   margin: 0 0 10px;
   display: inline-block;
+}
+.vex-content .row a.vex-dialog-button {
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+#edit-video input[type="text"] {
+  width: 100%;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px transparent solid;
+  padding: 4px 5px;
+  margin: 5px 0 5px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
+  transition: all 500ms;
+}
+#edit-video input[type="text"]:focus {
+  border-color: #81AADA;
+}
+.button-styles {
+  border-radius: 3px;
+  border: 0;
+  float: right;
+  margin: 0 0 0 0.5em;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8em;
+  line-height: 1em;
+  padding: 0.75em 2em;
+  background: #e0e0e0;
+  color: #777;
+  cursor: pointer;
+  transition: all 300ms;
+}
+.button-styles:hover {
+  background: #ccc;
+}
+.video-button {
+  border-radius: 3px;
+  border: 0;
+  float: right;
+  margin: 0 0 0 0.5em;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8em;
+  line-height: 1em;
+  padding: 0.75em 2em;
+  background: #e0e0e0;
+  color: #777;
+  cursor: pointer;
+  transition: all 300ms;
+  margin-right: 10px;
+}
+.video-button:hover {
+  background: #ccc;
 }

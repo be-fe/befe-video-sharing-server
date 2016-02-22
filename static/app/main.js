@@ -4,7 +4,8 @@
 
     var vars = {
         context: '',
-        tokenSalt: ''
+        tokenSalt: '',
+        tagHash: {}
     };
 
     var tpls = _.reduce(g.rawTpls, function(result, curr, key) {
@@ -93,25 +94,51 @@
                 data = JSON.parse(localStorage.getItem(this.localStorageKey + key));
             } catch(ex) {}
             return data;
+        },
+
+        getTokenHash: function() {
+            return md5(methods.getItem('admin_token') + vars.tokenSalt);
+        },
+
+        attrSelector: function(attr, value) {
+            return '[' + attr + '="' + value.split('"').join('\\"') + '"]';
+        },
+
+        getTagId: function() {
+            return new Date().getTime().toString(36) + '_' + Math.round(Math.random() * Math.pow(36, 6)).toString(36);
+        },
+
+        parseTimeId: function(timeId) {
+            timeId = Math.floor(timeId);
+            return Math.floor(timeId / 60) + ':' + (timeId % 60);
+        },
+
+        resolveTime: function(timeText) {
+            timeText = _.trim(timeText);
+            var parts = timeText.split(':');
+            return ~~parts[0] * 60 + ~~parts[1];
         }
+
     };
 
     var $els = {};
+    var player = new ClipPlayer();
 
     var main = {
         init: function (opts) {
             _.extend(vars, opts);
-
-            var player = new ClipPlayer();
             player.init($('#player'));
+            var self = this;
 
             $els.sidebar = $('#sidebar');
             $els.body = $(document.body);
             $els.videoList = $els.sidebar.find('.video-list');
+            $els.tagList = $els.sidebar.find('.tag-list');
 
             var initParams = methods.parseHashParams();
 
-            $els.body.toggleClass('sidebar-shown', !initParams.video);
+            $els.body.toggleClass('sidebar-shown video-tab-shown', !initParams.video);
+            vars.videoKey = initParams.video;
 
             methods.onHashChange(function() {
                 var params = methods.parseHashParams();
@@ -121,6 +148,12 @@
                 }, function(clipList) {
                     player.setPlayList(clipList, methods.url('/videos/' + params.video + '/video/'));
                     player.playAtTime(0);
+                });
+
+                $.post(methods.url('/ajax/video-tags'), {
+                    videoKey: params.video
+                }, function(tags) {
+                    self.renderTags(tags);
                 });
 
                 // 目标params - {video, t, search}
@@ -134,6 +167,17 @@
             // main.openAdminDialog();
         },
 
+        checkSimpleActionAuth: function(result, success) {
+            var self = this;
+
+            if (result.status != 'ok') {
+                vars.tokenSalt = result.tokenSalt;
+                self.openAdminDialog();
+            } else {
+                success(result);
+            }
+        },
+
         openEditVideo: function(video) {
             var self = this;
 
@@ -144,7 +188,28 @@
                     videoName: video.name
                 }),
                 callback: function(data) {
+                    if (!data) {
+                        return;
+                    }
 
+                    if (!_.trim(data['video-name'])) {
+                        vex.dialog.alert('视频名字不能为空.');
+                        return;
+                    }
+
+                    $.post(methods.url('/ajax/rename-video'), {
+                        tokenHash: methods.getTokenHash(),
+                        videoKey: video.key,
+                        videoName: data['video-name']
+                    }, function(result) {
+                        main.checkSimpleActionAuth(result, function() {
+                            $els.videoList.find(methods.attrSelector('video-key', video.key))
+                                .find('.video-name')
+                                .text(data['video-name']);
+
+                            video.name = data['video-name'];
+                        });
+                    });
                 }
             })).data().vex.id;
 
@@ -156,21 +221,98 @@
                     callback: function(data) {
                         if (data) {
                             $.post(methods.url('/ajax/remove-video'), {
-                                tokenHash : md5(methods.getItem('admin_token') + vars.tokenSalt),
+                                tokenHash : methods.getTokenHash(),
                                 videoKey : video.key
-                            }, function(result) {
-                                if (result != 'ok') {
-                                    vars.tokenSalt = result;
-                                    self.openAdminDialog();
-                                } else {
-                                    $els.videoList.find('[video-key=' + video.key + ']').remove();
+                            }, function (result) {
+                                main.checkSimpleActionAuth(result, function() {
+                                    $els.videoList.find(methods.attrSelector('video-key', video.key)).remove();
                                     vex.close(dialogId);
-                                }
+                                })
                             });
                         }
                     }
                 });
             });
+        },
+
+        openEditTag: function(tag) {
+            var self = this;
+            if (!tag) {
+                tag = {
+                    timeId: player.getCurrentTimeId() || 0,
+                    name: '未命名标签'
+                }
+            }
+
+            vex.dialog.open({
+                message: '设置视频时间点',
+
+                input: tpls.editTag({
+                    tagTimeId: methods.parseTimeId(tag.timeId),
+                    tagName: tag.name
+                }),
+
+                callback: function(data) {
+                    if (data) {
+                        var time = methods.resolveTime(data['tag-time']);
+                        if (time) {
+                            tag.timeId = time;
+                            tag.name = data['tag-name'];
+                            var isNew = false;
+                            if (!tag.id) {
+                                tag.id = methods.getTagId();
+                                isNew = true;
+                            }
+
+                            $.post(methods.url('/ajax/set-tag'), {
+                                isNew: isNew,
+                                tagId: tag.id,
+                                tagName: tag.name,
+                                tagTimeId: tag.timeId
+                            }, function(tags) {
+                                self.renderTags(tags);
+                            });
+                        }
+                    }
+                }
+            });
+
+            $('#edit-video').find('.tag-name').focus();
+        },
+
+        renderTags: function(tags) {
+            vars.tags = tags;
+            vars.tagHash = {};
+            $els.tagList.empty();
+            vars.tags.forEach(function(tag) {
+                vars.tagHash[tag.timeId] = tag;
+
+                var $videoTag = $(tpls.sidebarVideoTag({
+                    videoKey: params.video,
+                    tagTime: methods.parseTimeId(tag.timeId),
+                    tagName: tag.name
+                }));
+
+                $els.tagList.append($videoTag);
+            });
+        },
+
+        filterVideos: function(keywordText) {
+            var keywords = _.trim(keywordText).split(/\s+/);
+
+            $els.videoList.find('.video')
+                .each(function() {
+                    var $video = $(this);
+                    var video = $video.data('video');
+
+                    if (keywords.every(function(keyword) {
+                        return video.name.indexOf(keyword) != -1
+                    })) {
+                        $video.attr('filter-hidden', 'false');
+                    } else {
+                        $video.attr('filter-hidden', 'true');
+                    }
+                });
         },
 
         openAdminDialog: function() {
@@ -192,6 +334,18 @@
 
             $els.sidebar.on('click', '.handle', function() {
                 $els.body.toggleClass('sidebar-shown');
+            }).on('keyup', '.search-bar', _.debounce(function() {
+                var keywordText = $(this).val();
+
+                main.filterVideos(keywordText);
+            }, 200)).on('click', '.add-video-tag', function() {
+                if (!vars.videoKey) {
+                    vex.dialog.alert('没有任何视频正在播放.');
+                } else if (vars.tagHash[player.getCurrentTimeId()]) {
+                    main.openEditTag(vars.tagHash[player.getCurrentTimeId()]);
+                } else {
+                    main.openEditTag();
+                }
             });
 
             $els.videoList.on('click', '.edit', function(e) {
@@ -201,8 +355,15 @@
                 e.stopPropagation();
                 e.preventDefault();
             });
+
+
+            player.on(player.eventNames.onTimeChanged, function(video) {
+
+            });
         }
+
     };
+
     g.main = g.main || main;
 
 })(jQuery, _, window);

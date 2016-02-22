@@ -3,6 +3,10 @@ body, div {
   padding: 0;
 }
 
+body {
+  overflow: hidden;
+}
+
 @sidebar-width: 280px;
 @transition-time: 300ms;
 @transition-time-long: @transition-time*2;
@@ -16,12 +20,43 @@ body {
   background: @color-background;
 }
 
+.input-styles {
+  width: 100%;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px transparent solid;
+  padding: 4px 5px;
+  margin: 5px 0 5px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
+  transition: all 500ms;
+
+  &:focus {
+    border-color: @color-focus-input;
+  }
+}
+
 #player {
   width: 100vw;
   height: 100vh;
   position: relative;
   //transition: left @transition-time, width @transition-time;
   z-index: 100;
+}
+
+.table-container {
+  display: table;
+  width: 100%;
+
+  .table-row {
+    display: table-row;
+
+    .table-cell {
+      display: table-cell;
+    }
+  }
 }
 
 #sidebar {
@@ -37,9 +72,37 @@ body {
   border-right: #eee;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 
+  .all-videos {
+    display: none;
+  }
+
+  .tabs {
+    margin-bottom: 10px;
+    @color-tab-focus: #40aded;
+
+    .tab {
+      text-align: center;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 300ms;
+
+      &:hover {
+        background: @color-tab-focus;
+        color: #fff;
+      }
+    }
+  }
+
   .video-list-wrapper {
     overflow: auto;
     height: 100%;
+  }
+
+  input {
+    .input-styles();
+    width: 95%;
+    margin: 8px auto;
+    display: block;
   }
 
   .edit {
@@ -63,6 +126,10 @@ body {
     margin: 15px;
     position: relative;
     word-break: break-all;
+  }
+
+  a.video[filter-hidden=true] {
+    display: none;
   }
 
   // 内个sidebar的展开收缩手柄
@@ -99,6 +166,18 @@ body {
   }
 }
 
+.video-tag-shown {
+  #sdiebar {
+    .all-videos {
+      display: block;
+    }
+
+    .current-video {
+      display: none;
+    }
+  }
+}
+
 .sidebar-shown {
   #player {
     left: @sidebar-width;
@@ -113,6 +192,7 @@ body {
     transform: rotateZ(180deg);
     -webkit-transform: rotateZ(180deg);
   }
+
 }
 
 .vex-content {
@@ -120,19 +200,9 @@ body {
     word-break: break-all;
   }
 
-  input {
-    width: 100%;
-    line-height: 24px;
-    font-size: 18px;
-    border-radius: 3px;
-    border: 1px transparent solid;
-    padding: 4px 5px;
-    margin: 5px 0 5px;
-
-    &:focus {
-      border-color: @color-focus-input;
-      outline: none;
-    }
+  .vex-dialog-form .vex-dialog-input input[type="text"] {
+    box-shadow: none;
+    border-width: 1px;
   }
 
   .row {
@@ -142,5 +212,41 @@ body {
       margin: 0 0 10px;
       display: inline-block;
     }
+
+    a.vex-dialog-button {
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
   }
+}
+
+#edit-video input[type="text"] {
+  .input-styles();
+}
+
+.button-styles {
+  border-radius: 3px;
+  border: 0;
+  float: right;
+  margin: 0 0 0 0.5em;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8em;
+  line-height: 1em;
+  padding: 0.75em 2em;
+  background: #e0e0e0;
+  color: #777;
+  cursor: pointer;
+  transition: all 300ms;
+
+  &:hover {
+    background: #ccc;
+  }
+}
+
+.video-button {
+  .button-styles();
+
+  margin-right: 10px;
 }

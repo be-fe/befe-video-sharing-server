@@ -27,16 +27,6 @@
             });
             return hash;
         },
-        trySetDurationOfLastClip: function(duration, clipIndex, setPercentage) {
-            if (!states.lastDurationSet && clipIndex == states.playList.length - 1) {
-                var opts = this.opts;
-
-                states.lastDuration = duration;
-                states.lastDurationSet = true;
-                states.total = states.total - opts.duration + duration;
-                setPercentage();
-            }
-        },
         resolveTimeId: function (timeId) {
             var opts = this.opts;
             var states = this.states;
@@ -96,7 +86,7 @@
         init: function ($container, opts) {
             opts = opts || {};
             opts.duration = opts.duration || defaultOpts.duration;
-            opts.baseUrl = opts.duration || defaultOpts.baseUrl;
+            opts.baseUrl = opts.baseUrl || defaultOpts.baseUrl;
             methods.opts = this.opts = opts;
             methods.states = states;
 
@@ -187,9 +177,6 @@
         initVideoEvents: function (video) {
             var self = this;
             video.addEventListener('loadeddata', function () {
-                methods.trySetDurationOfLastClip(video.duration, video.clipIndex, function() {
-                    self.setPercentage(video.timeId + video.currentTime);
-                });
                 video.playSecondOnLoaded && video.playSecondOnLoaded();
             });
 
@@ -202,20 +189,18 @@
                 //    second,
                 //    states.total
                 //);
-
+                self.callHandler(self.eventNames.onTimeChanged, [video]);
                 self.setPercentage(video.timeId + video.currentTime)
             });
         },
         setPercentage: function (timeId) {
-            var opts = this.opts;
             var second = methods.timeIdToSecond(timeId);
-            var percentage = second >= 0 ? (second / states.total) * 100 + '%' : '100%';
-            states.$handle.css('left', percentage);
-            states.$played.css('width', percentage);
+            var percetage = second >= 0 ? (second / states.total) * 100 + '%' : '100%';
+            states.$handle.css('left', percetage);
+            states.$played.css('width', percetage);
         },
         setPlayList: function (playList, baseUrl) {
             var opts = this.opts;
-            states.lastDurationSet = false;
             states.playList = playList;
             states.playHash = methods.processPlayListHash(playList);
             states.total = playList.length * this.opts.duration;
@@ -247,7 +232,6 @@
             } else {
                 vcurr.src = methods.videoUrl(clip.clip);
                 vcurr.timeId = clip.timeId;
-                vcurr.clipIndex = clip.index;
 
                 if (timeIdObject.second) {
                     vcurr.load();
@@ -278,7 +262,6 @@
             var vnext = states.vnext;
             vnext.src = methods.videoUrl(nextClip.clip);
             vnext.timeId = nextClip.timeId;
-            vnext.clipIndex = nextClip.index;
             vnext.load();
 
             return this;
@@ -299,11 +282,27 @@
             states.$vcurr = $(states.vcurr);
             states.$vnext = $(states.vnext);
         },
+        callbacks: {},
+        /**
+         * Remember, only one hanlder could be bound to callback,
+         * make use of your own handler management...
+         * @param eventName
+         * @param callback
+         * @returns {ClipPlayer}
+         */
         on: function (eventName, callback) {
+            this.callbacks[eventName] = callback;
             return this;
         },
         off: function (eventName) {
+            delete this.callbacks[eventName];
             return this;
+        },
+        eventNames: {
+            onTimeChanged: 'onTimeChanged'
+        },
+        callHandler: function(eventName, args) {
+            this.callbacks[eventName] && this.callbacks[eventName].apply(this, args)
         },
         play: function () {
             var vcurr = states.vcurr;
@@ -317,6 +316,9 @@
         pause: function () {
             states.vcurr.pause();
             return this;
+        },
+        getCurrentTimeId: function() {
+            return Math.round(states.vcurr.timeId + states.vcurr.currentTime);
         }
     };
 

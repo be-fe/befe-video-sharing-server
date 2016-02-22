@@ -16,7 +16,7 @@ gulp.task('less', ['compile-less'], function() {
 });
 
 gulp.task('compile-less', ['really-compile-less'], function() {
-    exec('say 你的less构建好了, 猴塞雷啊.')
+    //exec('say 你的less构建好了, 猴塞雷啊.')
 });
 
 gulp.task('really-compile-less', function() {

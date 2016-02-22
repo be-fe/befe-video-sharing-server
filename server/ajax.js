@@ -127,15 +127,42 @@ module.exports = {
             }
         };
 
+        var checkAdminTokenOrReturn = function(tokenHash, callback, res) {
+            var checkResult = checkAdminToken(tokenHash);
+            if (checkResult) {
+                var result = callback();
+                res.send({
+                    status: 'ok',
+                    result: result
+                });
+            } else {
+                res.send({
+                    status: 'error',
+                    tokenSalt: config.params.tokenSalt
+                });
+            }
+        };
+
         app.post('/ajax/remove-video', function(req, res) {
             var params = req.body;
-            if (checkAdminToken(params.tokenHash)) {
+
+            checkAdminTokenOrReturn(parasms.tokenHash, function() {
                 console.log(config.path.videos + SP + params.videoKey);
-                //rmdir(config.path.videos + SP + params.videoKey);
-                res.send('ok');
-            } else {
-                res.send(config.params.tokenSalt);
-            }
+                rmdir(config.path.videos + SP + params.videoKey);
+                var videoInfo = videoLogic.readVideoInfo();
+                delete videoInfo.names[params.videoKey];
+                videoLogic.writeVideoInfo(videoInfo);
+            }, res);
+        });
+
+        app.post('/ajax/rename-video', function(req, res) {
+            var params = req.body;
+
+            checkAdminTokenOrReturn(params.tokenHash, function() {
+                var videoInfo = videoLogic.readVideoInfo();
+                videoInfo.names[params.videoKey] = params.videoName;
+                videoLogic.writeVideoInfo(videoInfo);
+            }, res);
         });
 
         app.post('/ajax/all-videos', function(req, res) {
@@ -153,6 +180,64 @@ module.exports = {
                 }
             });
             res.send(videos);
+        });
+
+        app.post('/ajax/set-tag', function(req, res) {
+            var params = req.body;
+
+            checkAdminTokenOrReturn(params.tokenHash, function() {
+                var singleVideoInfo = videoLogic.readSingleVideoInfo(params.videoKey);
+
+                if (params.isNew) {
+                    singleVideoInfo.tags.push({
+                        id: params.tagId,
+                        name: params.tagName,
+                        timeId: params.tagTimeId
+                    });
+                } else {
+                    singleVideoInfo.tags.some(function(tag, tagIndex) {
+                        if (tag.id == params.tagId) {
+                            tag.name = params.tagName;
+                            tag.timeId = params.tagTimeId;
+                            return true;
+                        }
+                    });
+                }
+
+                videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
+            }, res);
+
+        });
+
+        app.post('/ajax/remove-tag', function(req, res) {
+            var params = req.body;
+
+            checkAdminTokenOrReturn(params.tokenHash, function() {
+
+                var singleVideoInfo = videoLogic.readSingleVideoInfo(params.videoKey);
+
+                var idx = -1;
+                singleVideoInfo.tags.some(function(tag, tagIndex) {
+                    if (tag.id == params.tagid) {
+                        idx = tagIndex;
+                        return true;
+                    }
+                });
+                if (idx != -1) {
+                    singleVideoInfo.tags.splice(idx, 1);
+                }
+
+                videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
+
+            }, res);
+
+        });
+
+        app.post('/ajax/video-tags', function(req, res) {
+            var params = req.body;
+
+            var singleVideoInfo = videoLogic.readSingleVideoInfo(params.videoKey);
+            res.send(singleVideoInfo.tags);
         });
     }
 };
