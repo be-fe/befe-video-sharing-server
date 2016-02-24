@@ -170,6 +170,9 @@ body {
 #sidebar .tag-list .video-tag:hover .tag-time {
   background: #d1e1ed;
 }
+#sidebar .tag-list .playing .tag-time {
+  background: #b1dd96;
+}
 .video-tag-shown #sidebar .all-videos {
   display: none;
 }

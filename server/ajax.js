@@ -188,23 +188,27 @@ module.exports = {
             checkAdminTokenOrReturn(params.tokenHash, function() {
                 var singleVideoInfo = videoLogic.readSingleVideoInfo(params.videoKey);
 
-                if (params.isNew) {
-                    singleVideoInfo.tags.push({
-                        id: params.tagId,
-                        name: params.tagName,
-                        timeId: params.tagTimeId
-                    });
-                } else {
-                    singleVideoInfo.tags.some(function(tag, tagIndex) {
+                if (params.tagId) {
+                    var found = singleVideoInfo.tags.some(function(tag, tagIndex) {
                         if (tag.id == params.tagId) {
                             tag.name = params.tagName;
                             tag.timeId = params.tagTimeId;
                             return true;
+                        } else if (tag.timeId == params.tagTimeId) {
+                            return true;
                         }
                     });
+
+                    if (!found) {
+                        singleVideoInfo.tags.push({
+                            id: params.tagId,
+                            name: params.tagName,
+                            timeId: params.tagTimeId
+                        });
+                    }
                 }
 
-                console.log(singleVideoInfo, params);
+                console.log(found, singleVideoInfo, params);
 
                 videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
                 return videoLogic.getVideoTags(params.videoKey, true);
@@ -216,23 +220,17 @@ module.exports = {
             var params = req.body;
 
             checkAdminTokenOrReturn(params.tokenHash, function() {
-
                 var singleVideoInfo = videoLogic.readSingleVideoInfo(params.videoKey);
 
-                var idx = -1;
-                singleVideoInfo.tags.some(function(tag, tagIndex) {
-                    if (tag.id == params.tagid) {
-                        idx = tagIndex;
-                        return true;
+                for (var i = singleVideoInfo.tags.length; i-- > 0;) {
+                    var tag = singleVideoInfo.tags[i];
+                    if (tag.id == params.tagId) {
+                        singleVideoInfo.tags.splice(i, 1);
                     }
-                });
-                if (idx != -1) {
-                    singleVideoInfo.tags.splice(idx, 1);
                 }
 
                 videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
                 return videoLogic.getVideoTags(params.videoKey, true);
-
             }, res);
 
         });

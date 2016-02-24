@@ -169,6 +169,7 @@ body {
 
   .tag-list {
     @color-hovered: #d1e1ed;
+    @color-playing: #b1dd96;
 
     padding: 35px 10px;
     cursor: pointer;
@@ -199,6 +200,12 @@ body {
         .tag-time {
           background: @color-hovered;
         }
+      }
+    }
+
+    .playing {
+      .tag-time {
+        background: @color-playing;
       }
     }
   }

@@ -139,7 +139,7 @@
 
             var initParams = methods.parseHashParams();
 
-            $els.body.toggleClass('video-tag-shown', initParams.video);
+            $els.body.toggleClass('video-tag-shown', !!initParams.video);
             vars.videoKey = initParams.video;
 
             methods.onHashChange(function () {
@@ -288,7 +288,22 @@
                 }
             })).data().vex.id;
 
-                $('#edit-tag').find('.tag-name').select();
+                $('#edit-tag')
+                    .on('click', '.remove-tag', function() {
+                        if (tag.id) {
+                            $.post('/ajax/remove-tag', {
+                                tokenHash: methods.getTokenHash(),
+                                videoKey: vars.videoKey,
+                                tagId: tag.id
+                            }, function (response) {
+                                main.checkSimpleActionAuth(response, function() {
+                                    self.renderTags(response.result);
+                                });
+                            })
+                        }
+                        vex.close(dialogId);
+                    })
+                    .find('.tag-name').select();
         },
 
         renderTags: function (tags) {
@@ -301,6 +316,7 @@
                 var $videoTag = $(tpls.sidebarVideoTag({
                     videoKey: vars.videoKey,
                     tagId: tag.id,
+                    tagTimeId: tag.timeId,
                     tagTime: methods.parseTimeId(tag.timeId),
                     tagName: tag.name
                 }));
@@ -352,7 +368,7 @@
                 var keywordText = $(this).val();
 
                 main.filterVideos(keywordText);
-            }, 200)).on('click', '.add-video-tag', function () {
+            }, 200)).on('click', '.add-video-tag', function (e) {
                 if (!vars.videoKey) {
                     vex.dialog.alert('没有任何视频正在播放.');
                 } else if (vars.tagHash[player.getCurrentTimeId()]) {
@@ -360,8 +376,16 @@
                 } else {
                     main.openEditTag();
                 }
+                e.stopPropagation();
             }).on('click', '[tab-for]', function() {
                 $els.body.toggleClass('video-tag-shown', $(this).attr('tab-for') == 'current-video');
+            }).on('click', '.video-tag', function() {
+                var $curr = $(this);
+
+                $(prevTag).removeClass('playing');
+                $curr.addClass('playing');
+                player.playAtTimeId(~~$curr.attr('tag-time-id'));
+                prevTag = $curr[0];
             });
 
 
@@ -382,8 +406,21 @@
             });
 
 
+            var prevTag;
             player.on(player.eventNames.onTimeChanged, function (video) {
+                var currentTime = Math.round(video.timeId + video.currentTime);
 
+                var $curr = $(methods.attrSelector('tag-time-id', currentTime.toString()));
+                if ($curr.length) {
+                    if (!$curr.is('.playing')) {
+                        $curr.addClass('playing');
+                    }
+
+                    if (prevTag && $curr[0] !== prevTag) {
+                        $(prevTag).removeClass('playing');
+                    }
+                    prevTag = $curr[0];
+                }
             });
         }
 
