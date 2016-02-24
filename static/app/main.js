@@ -8,7 +8,7 @@
         tagHash: {}
     };
 
-    var tpls = _.reduce(g.rawTpls, function(result, curr, key) {
+    var tpls = _.reduce(g.rawTpls, function (result, curr, key) {
         result[key] = _.template(curr, {variable: 'd'});
         return result;
     }, {});
@@ -45,12 +45,12 @@
         },
 
         isManualHashChange: false,
-        manualChangeHash: function(hash) {
+        manualChangeHash: function (hash) {
             this.isManualHashChange = true;
             location.hash = hash;
         },
-        onHashChange: function(callback) {
-            $(window).on('hashchange', function() {
+        onHashChange: function (callback) {
+            $(window).on('hashchange', function () {
                 if (!this.isManualHashChange) {
                     callback && callback();
                 } else {
@@ -62,15 +62,15 @@
             callback && callback();
         },
 
-        url: function(path) {
+        url: function (path) {
             return vars.context + path;
         },
 
-        loadVideos: function() {
-            $.post(methods.url('/ajax/all-videos'), function(videos) {
+        loadVideos: function () {
+            $.post(methods.url('/ajax/all-videos'), function (videos) {
                 console.log('all videos: ', videos);
 
-                videos.forEach(function(video) {
+                videos.forEach(function (video) {
 
                     var videoHtml = tpls.sidebarVideo({
                         videoKey: video.key,
@@ -85,35 +85,37 @@
         },
 
         localStorageKey: 'befe_video_sharing_',
-        setItem: function(key, data) {
+        setItem: function (key, data) {
             localStorage.setItem(this.localStorageKey + key, JSON.stringify(data));
         },
-        getItem: function(key) {
+        getItem: function (key) {
             var data = null;
             try {
                 data = JSON.parse(localStorage.getItem(this.localStorageKey + key));
-            } catch(ex) {}
+            } catch (ex) {
+            }
             return data;
         },
 
-        getTokenHash: function() {
+        getTokenHash: function () {
             return md5(methods.getItem('admin_token') + vars.tokenSalt);
         },
 
-        attrSelector: function(attr, value) {
+        attrSelector: function (attr, value) {
             return '[' + attr + '="' + value.split('"').join('\\"') + '"]';
         },
 
-        getTagId: function() {
+        getTagId: function () {
             return new Date().getTime().toString(36) + '_' + Math.round(Math.random() * Math.pow(36, 6)).toString(36);
         },
 
-        parseTimeId: function(timeId) {
+        parseTimeId: function (timeId) {
             timeId = Math.floor(timeId);
-            return Math.floor(timeId / 60) + ':' + (timeId % 60);
+            var second = timeId % 60;
+            return Math.floor(timeId / 60) + ':' + (second >= 10 ? second: '0' + second);
         },
 
-        resolveTime: function(timeText) {
+        resolveTime: function (timeText) {
             timeText = _.trim(timeText);
             var parts = timeText.split(':');
             return ~~parts[0] * 60 + ~~parts[1];
@@ -137,24 +139,26 @@
 
             var initParams = methods.parseHashParams();
 
-            $els.body.toggleClass('sidebar-shown video-tab-shown', !initParams.video);
+            $els.body.toggleClass('video-tag-shown', initParams.video);
             vars.videoKey = initParams.video;
 
-            methods.onHashChange(function() {
+            methods.onHashChange(function () {
                 var params = methods.parseHashParams();
 
                 $.post(methods.url('/ajax/video-list'), {
                     video: params.video
-                }, function(clipList) {
+                }, function (clipList) {
                     player.setPlayList(clipList, methods.url('/videos/' + params.video + '/video/'));
                     player.playAtTime(0);
                 });
 
-                $.post(methods.url('/ajax/video-tags'), {
-                    videoKey: params.video
-                }, function(tags) {
-                    self.renderTags(tags);
-                });
+                if (params.video) {
+                    $.post(methods.url('/ajax/video-tags'), {
+                        videoKey: params.video
+                    }, function (tags) {
+                        self.renderTags(tags);
+                    });
+                }
 
                 // 目标params - {video, t, search}
                 console.log(params);
@@ -167,7 +171,7 @@
             // main.openAdminDialog();
         },
 
-        checkSimpleActionAuth: function(result, success) {
+        checkSimpleActionAuth: function (result, success) {
             var self = this;
 
             if (result.status != 'ok') {
@@ -178,7 +182,7 @@
             }
         },
 
-        openEditVideo: function(video) {
+        openEditVideo: function (video) {
             var self = this;
 
             var dialogId = $(vex.dialog.open({
@@ -187,7 +191,7 @@
                     videoKey: video.key,
                     videoName: video.name
                 }),
-                callback: function(data) {
+                callback: function (data) {
                     if (!data) {
                         return;
                     }
@@ -201,8 +205,8 @@
                         tokenHash: methods.getTokenHash(),
                         videoKey: video.key,
                         videoName: data['video-name']
-                    }, function(result) {
-                        main.checkSimpleActionAuth(result, function() {
+                    }, function (result) {
+                        main.checkSimpleActionAuth(result, function () {
                             $els.videoList.find(methods.attrSelector('video-key', video.key))
                                 .find('.video-name')
                                 .text(data['video-name']);
@@ -213,18 +217,18 @@
                 }
             })).data().vex.id;
 
-            $('#edit-video').on('click', '.remove-video', function(e) {
+            $('#edit-video').on('click', '.remove-video', function (e) {
                 console.log('remove video ', video);
 
                 vex.dialog.confirm({
                     message: '是否确认删除视频 : ' + video.name + ' #id(' + video.key + ') ?',
-                    callback: function(data) {
+                    callback: function (data) {
                         if (data) {
                             $.post(methods.url('/ajax/remove-video'), {
-                                tokenHash : methods.getTokenHash(),
-                                videoKey : video.key
+                                tokenHash: methods.getTokenHash(),
+                                videoKey: video.key
                             }, function (result) {
-                                main.checkSimpleActionAuth(result, function() {
+                                main.checkSimpleActionAuth(result, function () {
                                     $els.videoList.find(methods.attrSelector('video-key', video.key)).remove();
                                     vex.close(dialogId);
                                 })
@@ -235,7 +239,7 @@
             });
         },
 
-        openEditTag: function(tag) {
+        openEditTag: function (tag) {
             var self = this;
             if (!tag) {
                 tag = {
@@ -244,7 +248,9 @@
                 }
             }
 
-            vex.dialog.open({
+            player.pause();
+
+            var dialogId = $(vex.dialog.open({
                 message: '设置视频时间点',
 
                 input: tpls.editTag({
@@ -252,7 +258,8 @@
                     tagName: tag.name
                 }),
 
-                callback: function(data) {
+                callback: function (data) {
+                    player.play();
                     if (data) {
                         var time = methods.resolveTime(data['tag-time']);
                         if (time) {
@@ -265,49 +272,56 @@
                             }
 
                             $.post(methods.url('/ajax/set-tag'), {
+                                tokenHash: methods.getTokenHash(),
+                                videoKey: vars.videoKey,
                                 isNew: isNew,
                                 tagId: tag.id,
                                 tagName: tag.name,
                                 tagTimeId: tag.timeId
-                            }, function(tags) {
-                                self.renderTags(tags);
+                            }, function (response) {
+                                main.checkSimpleActionAuth(response, function() {
+                                    self.renderTags(response.result);
+                                });
                             });
                         }
                     }
                 }
-            });
+            })).data().vex.id;
 
-            $('#edit-video').find('.tag-name').focus();
+                $('#edit-tag').find('.tag-name').select();
         },
 
-        renderTags: function(tags) {
+        renderTags: function (tags) {
             vars.tags = tags;
             vars.tagHash = {};
             $els.tagList.empty();
-            vars.tags.forEach(function(tag) {
+            vars.tags.forEach(function (tag) {
                 vars.tagHash[tag.timeId] = tag;
 
                 var $videoTag = $(tpls.sidebarVideoTag({
-                    videoKey: params.video,
+                    videoKey: vars.videoKey,
+                    tagId: tag.id,
                     tagTime: methods.parseTimeId(tag.timeId),
                     tagName: tag.name
                 }));
+
+                $videoTag.data('tag', tag);
 
                 $els.tagList.append($videoTag);
             });
         },
 
-        filterVideos: function(keywordText) {
+        filterVideos: function (keywordText) {
             var keywords = _.trim(keywordText).split(/\s+/);
 
             $els.videoList.find('.video')
-                .each(function() {
+                .each(function () {
                     var $video = $(this);
                     var video = $video.data('video');
 
-                    if (keywords.every(function(keyword) {
-                        return video.name.indexOf(keyword) != -1
-                    })) {
+                    if (keywords.every(function (keyword) {
+                            return video.name.indexOf(keyword) != -1
+                        })) {
                         $video.attr('filter-hidden', 'false');
                     } else {
                         $video.attr('filter-hidden', 'true');
@@ -315,11 +329,11 @@
                 });
         },
 
-        openAdminDialog: function() {
+        openAdminDialog: function () {
             vex.dialog.open({
                 message: '做任何修改操作前请先输入管理员token, 请联系 zhengliangliang@baidu.com',
                 input: tpls.adminToken(),
-                callback: function(data) {
+                callback: function (data) {
                     if (data) {
                         methods.setItem('admin_token', data['admin-token']);
                     }
@@ -329,16 +343,16 @@
             $('[name=admin-token]').focus();
         },
 
-        initPage: function() {
+        initPage: function () {
             var self = this;
 
-            $els.sidebar.on('click', '.handle', function() {
+            $els.sidebar.on('click', '.handle', function () {
                 $els.body.toggleClass('sidebar-shown');
-            }).on('keyup', '.search-bar', _.debounce(function() {
+            }).on('keyup', '.search-bar', _.debounce(function () {
                 var keywordText = $(this).val();
 
                 main.filterVideos(keywordText);
-            }, 200)).on('click', '.add-video-tag', function() {
+            }, 200)).on('click', '.add-video-tag', function () {
                 if (!vars.videoKey) {
                     vex.dialog.alert('没有任何视频正在播放.');
                 } else if (vars.tagHash[player.getCurrentTimeId()]) {
@@ -346,9 +360,12 @@
                 } else {
                     main.openEditTag();
                 }
+            }).on('click', '[tab-for]', function() {
+                $els.body.toggleClass('video-tag-shown', $(this).attr('tab-for') == 'current-video');
             });
 
-            $els.videoList.on('click', '.edit', function(e) {
+
+            $els.videoList.on('click', '.edit', function (e) {
                 var $a = $(this).parent();
                 self.openEditVideo($a.data('video'));
 
@@ -356,8 +373,16 @@
                 e.preventDefault();
             });
 
+            $els.tagList.on('click', '.tag-edit', function(e) {
+                var $tag = $(this).parent();
+                self.openEditTag($tag.data('tag'));
 
-            player.on(player.eventNames.onTimeChanged, function(video) {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+
+            player.on(player.eventNames.onTimeChanged, function (video) {
 
             });
         }

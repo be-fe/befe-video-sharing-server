@@ -1,7 +1,7 @@
 window.rawTpls = _.extend({}, window.rawTpls, {
-adminToken:"<input name=\"admin-token\" placeholder=\"请输入 admin token\">",
+adminToken:"<input name=\"admin-token\" placeholder=\"请输入 admin token\" type=\"text\">",
 editTag:"<div id=\"edit-tag\">\n    <div class=\"row\">\n        <label>时间</label>\n        <a class=\"set-as-current vex-dialog-button vex-dialog-button-secondary\">设置为当前时间</a>\n        <input type=\"text\" class=\"tag-time\" value=\"<%- d.tagTimeId %>\" name=\"tag-time\"/>\n    </div>\n    <div class=\"row\">\n        <label for=\"\">时间点名称</label>\n        <input type=\"text\" class=\"tag-name\" value=\"<%- d.tagName %>\" name=\"tag-name\"/>\n    </div>\n</div>",
 editVideo:"\n<div id=\"edit-video\">\n    <div class=\"row\">\n        <label>操作: </label>\n        <a class=\"remove-video vex-dialog-button vex-dialog-button-secondary\">删除视频</a>\n    </div>\n\n    <div class=\"row\">\n        <label for=\"video-name\">视频名称</label>\n        <input type=\"text\" name=\"video-name\" value=\"<%- d.videoName %>\"/>\n    </div>\n</div>",
 sidebarVideo:"<a class=\"video\"\n   video-key=\"<%- d.videoKey %>\"\n   href=\"#video=<%- d.videoKey %>\">\n    <span class=\"video-name\"><%- d.videoText %></span>\n    <span class=\"fa fa-edit edit\"></span>\n</a>",
-sidebarVideoTag:"<div class=\"video-tag\">\n    <a href=\"#video=<%- d.videoKey %>&tag=<%- d.tagId %>\"><%- d.tagTime %></a>\n    <span><%- d.tagName %></span>\n</div>"
+sidebarVideoTag:"<div class=\"video-tag\">\n    <a class=\"tag-time\" href=\"#video=<%- d.videoKey %>&tag=<%- d.tagId %>\"><%- d.tagTime %></a>\n    <span class=\"tag-name\"><%- d.tagName %></span>\n    <span class=\"tag-edit fa fa-edit\"></span>\n</div>"
 });

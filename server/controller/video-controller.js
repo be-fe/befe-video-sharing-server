@@ -26,8 +26,9 @@
             var json = this.readJson(path);
             if (!json) {
                 this.dumpJson(path, defaultValue);
+                json = defaultValue;
             }
-            return defaultValue;
+            return json;
         },
         readVideoInfo: function() {
             var self = this;
@@ -65,6 +66,17 @@
             var self = this;
 
             self.dumpJson(self.getSingleVideoInfoPath(videoKey), singleVideoInfo);
+        },
+        getVideoTags: function(videoKey, requireResort) {
+            var singleVideoInfo = this.readSingleVideoInfo(videoKey);
+            if (requireResort) {
+                singleVideoInfo.tags.sort(function(a, b) {
+                    return ~~a.timeId > ~~b.timeId ? 1 :
+                        ~~a.timeId < ~~b.timeId ? -1 : 0;
+                });
+                this.writeSingleVideoInfo(videoKey, singleVideoInfo)
+            }
+            return singleVideoInfo.tags;
         }
     };
 

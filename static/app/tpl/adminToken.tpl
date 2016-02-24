@@ -1,1 +1,1 @@
-<input name="admin-token" placeholder="请输入 admin token">
+<input name="admin-token" placeholder="请输入 admin token" type="text">

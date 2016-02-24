@@ -204,7 +204,10 @@ module.exports = {
                     });
                 }
 
+                console.log(singleVideoInfo, params);
+
                 videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
+                return videoLogic.getVideoTags(params.videoKey, true);
             }, res);
 
         });
@@ -228,6 +231,7 @@ module.exports = {
                 }
 
                 videoLogic.writeSingleVideoInfo(params.videoKey, singleVideoInfo);
+                return videoLogic.getVideoTags(params.videoKey, true);
 
             }, res);
 
