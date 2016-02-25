@@ -45,9 +45,13 @@
         },
 
         isManualHashChange: false,
-        manualChangeHash: function (hash) {
+        _onHashChangedHandler: null,
+        manualChangeHash: function (hash, reload) {
             this.isManualHashChange = true;
             location.hash = hash;
+            if (reload) {
+                this._onHashChangedHandler && this._onHashChangedHandler();
+            }
         },
         onHashChange: function (callback) {
             $(window).on('hashchange', function () {
@@ -60,6 +64,7 @@
 
             // init call
             callback && callback();
+            this._onHashChangedHandler = callback;
         },
 
         url: function (path) {
@@ -112,7 +117,7 @@
         parseTimeId: function (timeId) {
             timeId = Math.floor(timeId);
             var second = timeId % 60;
-            return Math.floor(timeId / 60) + ':' + (second >= 10 ? second: '0' + second);
+            return Math.floor(timeId / 60) + ':' + (second >= 10 ? second : '0' + second);
         },
 
         resolveTime: function (timeText) {
@@ -140,24 +145,41 @@
             var initParams = methods.parseHashParams();
 
             $els.body.toggleClass('video-tag-shown', !!initParams.video);
-            vars.videoKey = initParams.video;
 
             methods.onHashChange(function () {
                 var params = methods.parseHashParams();
 
-                $.post(methods.url('/ajax/video-list'), {
-                    video: params.video
-                }, function (clipList) {
-                    player.setPlayList(clipList, methods.url('/videos/' + params.video + '/video/'));
-                    player.playAtTime(0);
-                });
+                var jumpToTag = function (tagId) {
+                    if (tagId) {
+                        vars.tags.some(function (tag) {
+                            if (tag.id == tagId) {
+                                player.playAtTimeId(~~tag.timeId);
+                                return true;
+                            }
+                        });
+                    }
+                };
 
-                if (params.video) {
-                    $.post(methods.url('/ajax/video-tags'), {
-                        videoKey: params.video
-                    }, function (tags) {
-                        self.renderTags(tags);
+                if (params.video != vars.videoKey) {
+                    $.post(methods.url('/ajax/video-list'), {
+                        video: params.video
+                    }, function (clipList) {
+                        player.setPlayList(clipList, methods.url('/videos/' + params.video + '/video/'));
+                        player.playAtTime(0);
                     });
+
+                    vars.videoKey = params.video;
+
+                    if (params.video) {
+                        $.post(methods.url('/ajax/video-tags'), {
+                            videoKey: params.video
+                        }, function (tags) {
+                            self.renderTags(tags);
+                            jumpToTag(params.tag)
+                        });
+                    }
+                } else if (params.video) {
+                    jumpToTag(params.tag);
                 }
 
                 // 目标params - {video, t, search}
@@ -279,7 +301,7 @@
                                 tagName: tag.name,
                                 tagTimeId: tag.timeId
                             }, function (response) {
-                                main.checkSimpleActionAuth(response, function() {
+                                main.checkSimpleActionAuth(response, function () {
                                     self.renderTags(response.result);
                                 });
                             });
@@ -288,22 +310,26 @@
                 }
             })).data().vex.id;
 
-                $('#edit-tag')
-                    .on('click', '.remove-tag', function() {
-                        if (tag.id) {
-                            $.post('/ajax/remove-tag', {
-                                tokenHash: methods.getTokenHash(),
-                                videoKey: vars.videoKey,
-                                tagId: tag.id
-                            }, function (response) {
-                                main.checkSimpleActionAuth(response, function() {
-                                    self.renderTags(response.result);
-                                });
-                            })
-                        }
-                        vex.close(dialogId);
-                    })
-                    .find('.tag-name').select();
+            $('#edit-tag')
+                .on('click', '.remove-tag', function () {
+                    if (tag.id) {
+                        $.post('/ajax/remove-tag', {
+                            tokenHash: methods.getTokenHash(),
+                            videoKey: vars.videoKey,
+                            tagId: tag.id
+                        }, function (response) {
+                            main.checkSimpleActionAuth(response, function () {
+                                self.renderTags(response.result);
+                            });
+                        })
+                    }
+                    vex.close(dialogId);
+                })
+                .on('click', '.set-as-current', function () {
+                    var currentTimeId = player.getCurrentTimeId();
+                    $('#edit-tag').find('.tag-time').val(methods.parseTimeId(currentTimeId));
+                })
+                .find('.tag-name').select();
         },
 
         renderTags: function (tags) {
@@ -377,15 +403,18 @@
                     main.openEditTag();
                 }
                 e.stopPropagation();
-            }).on('click', '[tab-for]', function() {
+            }).on('click', '[tab-for]', function () {
                 $els.body.toggleClass('video-tag-shown', $(this).attr('tab-for') == 'current-video');
-            }).on('click', '.video-tag', function() {
+            }).on('click', '.video-tag', function (e) {
                 var $curr = $(this);
 
                 $(prevTag).removeClass('playing');
                 $curr.addClass('playing');
-                player.playAtTimeId(~~$curr.attr('tag-time-id'));
                 prevTag = $curr[0];
+
+                methods.manualChangeHash($curr.attr('href'), true);
+
+                e.preventDefault();
             });
 
 
@@ -397,7 +426,7 @@
                 e.preventDefault();
             });
 
-            $els.tagList.on('click', '.tag-edit', function(e) {
+            $els.tagList.on('click', '.tag-edit', function (e) {
                 var $tag = $(this).parent();
                 self.openEditTag($tag.data('tag'));
 
