@@ -284,28 +284,26 @@
                     player.play();
                     if (data) {
                         var time = methods.resolveTime(data['tag-time']);
-                        if (time) {
-                            tag.timeId = time;
-                            tag.name = data['tag-name'];
-                            var isNew = false;
-                            if (!tag.id) {
-                                tag.id = methods.getTagId();
-                                isNew = true;
-                            }
-
-                            $.post(methods.url('/ajax/set-tag'), {
-                                tokenHash: methods.getTokenHash(),
-                                videoKey: vars.videoKey,
-                                isNew: isNew,
-                                tagId: tag.id,
-                                tagName: tag.name,
-                                tagTimeId: tag.timeId
-                            }, function (response) {
-                                main.checkSimpleActionAuth(response, function () {
-                                    self.renderTags(response.result);
-                                });
-                            });
+                        tag.timeId = time;
+                        tag.name = data['tag-name'];
+                        var isNew = false;
+                        if (!tag.id) {
+                            tag.id = methods.getTagId();
+                            isNew = true;
                         }
+
+                        $.post(methods.url('/ajax/set-tag'), {
+                            tokenHash: methods.getTokenHash(),
+                            videoKey: vars.videoKey,
+                            isNew: isNew,
+                            tagId: tag.id,
+                            tagName: tag.name,
+                            tagTimeId: tag.timeId
+                        }, function (response) {
+                            main.checkSimpleActionAuth(response, function () {
+                                self.renderTags(response.result);
+                            });
+                        });
                     }
                 }
             })).data().vex.id;
