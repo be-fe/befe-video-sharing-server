@@ -332,7 +332,13 @@
                 .find('.tag-name').select();
         },
 
+        renderTagName: function(tagName) {
+            return _.escape(tagName)
+                .replace(/(\s|^)((?:https?|mailto|ftp):\/\/\S+)/g, '$1<a href="$2">$2</a>');
+        },
+
         renderTags: function (tags) {
+            var self = this;
             vars.tags = tags;
             vars.tagHash = {};
             $els.tagList.empty();
@@ -344,7 +350,7 @@
                     tagId: tag.id,
                     tagTimeId: tag.timeId,
                     tagTime: methods.parseTimeId(tag.timeId),
-                    tagName: tag.name
+                    tagName: self.renderTagName(tag.name)
                 }));
 
                 $videoTag.data('tag', tag);
@@ -385,6 +391,16 @@
             $('[name=admin-token]').focus();
         },
 
+        addVideoTag: function() {
+            if (!vars.videoKey) {
+                vex.dialog.alert('没有任何视频正在播放.');
+            } else if (vars.tagHash[player.getCurrentTimeId()]) {
+                main.openEditTag(vars.tagHash[player.getCurrentTimeId()]);
+            } else {
+                main.openEditTag();
+            }
+        },
+
         initPage: function () {
             var self = this;
 
@@ -395,26 +411,18 @@
 
                 main.filterVideos(keywordText);
             }, 200)).on('click', '.add-video-tag', function (e) {
-                if (!vars.videoKey) {
-                    vex.dialog.alert('没有任何视频正在播放.');
-                } else if (vars.tagHash[player.getCurrentTimeId()]) {
-                    main.openEditTag(vars.tagHash[player.getCurrentTimeId()]);
-                } else {
-                    main.openEditTag();
-                }
+                self.addVideoTag();
                 e.stopPropagation();
             }).on('click', '[tab-for]', function () {
                 $els.body.toggleClass('video-tag-shown', $(this).attr('tab-for') == 'current-video');
             }).on('click', '.video-tag', function (e) {
-                var $curr = $(this);
+                var $currTag = $(this);
 
-                $(prevTag).removeClass('playing');
-                $curr.addClass('playing');
-                prevTag = $curr[0];
+                $prevTag.removeClass('playing');
+                $currTag.addClass('playing');
+                $prevTag = $currTag;
 
-                methods.manualChangeHash($curr.attr('href'), true);
-
-                e.preventDefault();
+                methods.manualChangeHash($currTag.attr('href'), true);
             });
 
 
@@ -434,21 +442,27 @@
                 e.preventDefault();
             });
 
+            $(document).on('keyup', function(e) {
+                if (e.keyCode == 65 && $('input:focus, textarea:focus, .vex').length === 0) {
+                    self.addVideoTag();
+                    e.preventDefault();
+                }
+            });
 
-            var prevTag;
+            var $prevTag;
             player.on(player.eventNames.onTimeChanged, function (video) {
                 var currentTime = Math.round(video.timeId + video.currentTime);
 
-                var $curr = $(methods.attrSelector('tag-time-id', currentTime.toString()));
-                if ($curr.length) {
-                    if (!$curr.is('.playing')) {
-                        $curr.addClass('playing');
+                var $currTag = $(methods.attrSelector('tag-time-id', currentTime.toString()));
+                if ($currTag.length) {
+                    if (!$currTag.is('.playing')) {
+                        $currTag.addClass('playing');
                     }
 
-                    if (prevTag && $curr[0] !== prevTag) {
-                        $(prevTag).removeClass('playing');
+                    if ($prevTag && $currTag[0] !== $prevTag[0]) {
+                        $prevTag.removeClass('playing');
                     }
-                    prevTag = $curr[0];
+                    $prevTag = $currTag;
                 }
             });
         }

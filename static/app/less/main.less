@@ -7,7 +7,7 @@ body {
   overflow: hidden;
 }
 
-@sidebar-width: 280px;
+@sidebar-width: 320px;
 @transition-time: 300ms;
 @transition-time-long: @transition-time*2;
 
@@ -195,6 +195,15 @@ body {
 
       .tag-name {
         word-break: break-all;
+
+        a {
+          vertical-align: middle;
+          display: inline-block;
+          max-width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
 
       &:hover {

@@ -44,9 +44,9 @@ body {
 }
 #sidebar {
   top: 0;
-  left: -280px;
+  left: -320px;
   transition: left 600ms ease-out;
-  width: 280px;
+  width: 320px;
   height: 100vh;
   position: absolute;
   z-index: 200;
@@ -168,6 +168,14 @@ body {
 #sidebar .tag-list .video-tag .tag-name {
   word-break: break-all;
 }
+#sidebar .tag-list .video-tag .tag-name a {
+  vertical-align: middle;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 #sidebar .tag-list .video-tag:hover .tag-time {
   background: #d1e1ed;
 }
@@ -181,8 +189,8 @@ body {
   display: block;
 }
 .sidebar-shown #player {
-  left: 280px;
-  width: calc(100vw - 280px);
+  left: 320px;
+  width: calc(100vw - 320px);
 }
 .sidebar-shown #sidebar {
   left: 0;

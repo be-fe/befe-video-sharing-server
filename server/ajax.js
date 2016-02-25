@@ -210,8 +210,6 @@ module.exports = {
                             tag.name = params.tagName;
                             tag.timeId = params.tagTimeId;
                             return true;
-                        } else if (tag.timeId == params.tagTimeId) {
-                            return true;
                         }
                     });
 
