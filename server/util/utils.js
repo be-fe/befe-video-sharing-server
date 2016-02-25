@@ -10,14 +10,6 @@ module.exports = {
 
         config.params.tokenSalt = md5(Math.random() + new Date().getTime());
 
-        _.extend(config.path, {
-            adminTokenFile: config.path.data + '/admin-token.txt'
-        });
-
-        if (!fs.existsSync(config.path.adminTokenFile)) {
-            console.log('请确保 %s 存在并配置好, 请参照 doc/admin-token.example.txt', config.path.adminTokenFile);
-            process.exit(0);
-        }
         self.mkdir(config.path.data);
         self.mkdir(config.path.videos);
         self.mkdir(config.path.tmpFiles);

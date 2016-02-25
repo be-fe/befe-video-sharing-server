@@ -117,7 +117,7 @@ module.exports = {
         var adminToken = null;
         var checkAdminToken = function(tokenHash) {
             if (!adminToken) {
-                adminToken = fs.readFileSync(config.path.adminTokenFile).toString();
+                adminToken = config.tokenPass;
             }
 
             if (md5(adminToken + config.params.tokenSalt) == tokenHash) {
