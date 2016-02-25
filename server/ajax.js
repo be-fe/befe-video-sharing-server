@@ -4,7 +4,6 @@ var config = require('../common/config');
 var md5 = require('md5');
 var utils = require('./util/utils');
 var url = require('url');
-var rmdir = require( 'rmdir' );
 
 var _ = require('lodash');
 
@@ -17,6 +16,23 @@ var upload = multer({
         fileSize: config.maxFileContentLength
     }
 });
+
+var rmdir = function(path) {
+    if (fs.existsSync(path)) {
+        if (fs.statSync(path).isDirectory()) {
+            var files = fs.readdirSync(path);
+            files.forEach(function(file) {
+                if (file == '.' || file == '..') return;
+
+                rmdir(path + SP + file);
+            });
+
+            fs.rmdirSync(path);
+        } else {
+            fs.unlinkSync(path);
+        }
+    }
+};
 
 var videoLogic = require('./controller/video-controller');
 videoLogic.init(config);
@@ -146,7 +162,7 @@ module.exports = {
         app.post('/ajax/remove-video', function(req, res) {
             var params = req.body;
 
-            checkAdminTokenOrReturn(parasms.tokenHash, function() {
+            checkAdminTokenOrReturn(params.tokenHash, function() {
                 console.log(config.path.videos + SP + params.videoKey);
                 rmdir(config.path.videos + SP + params.videoKey);
                 var videoInfo = videoLogic.readVideoInfo();
