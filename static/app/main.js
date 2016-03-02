@@ -345,21 +345,26 @@
             vars.tags = tags;
             vars.tagHash = {};
             $els.tagList.empty();
-            vars.tags.forEach(function (tag) {
-                vars.tagHash[tag.timeId] = tag;
 
-                var $videoTag = $(tpls.sidebarVideoTag({
-                    videoKey: vars.videoKey,
-                    tagId: tag.id,
-                    tagTimeId: tag.timeId,
-                    tagTime: methods.parseTimeId(tag.timeId),
-                    tagName: self.renderTagName(tag.name)
-                }));
+            if (vars.tags.length) {
+                vars.tags.forEach(function (tag) {
+                    vars.tagHash[tag.timeId] = tag;
 
-                $videoTag.data('tag', tag);
+                    var $videoTag = $(tpls.sidebarVideoTag({
+                        videoKey: vars.videoKey,
+                        tagId: tag.id,
+                        tagTimeId: tag.timeId,
+                        tagTime: methods.parseTimeId(tag.timeId),
+                        tagName: self.renderTagName(tag.name)
+                    }));
 
-                $els.tagList.append($videoTag);
-            });
+                    $videoTag.data('tag', tag);
+
+                    $els.tagList.append($videoTag);
+                });
+            } else {
+                $els.tagList.html(tpls.emptyTagList());
+            }
         },
 
         filterVideos: function (keywordText) {

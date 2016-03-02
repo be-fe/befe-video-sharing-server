@@ -144,6 +144,10 @@ body {
 #sidebar .handle:hover {
   opacity: 1;
 }
+#sidebar .empty-tags {
+  margin: 10px 0;
+  line-height: 1.4;
+}
 #sidebar .tag-list {
   padding: 35px 10px;
   cursor: pointer;
