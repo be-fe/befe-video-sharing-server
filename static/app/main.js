@@ -75,7 +75,7 @@
             $.post(methods.url('/ajax/all-videos'), function (videos) {
                 console.log('all videos: ', videos);
 
-                video.sort(function(a, b) {
+                videos.sort(function(a, b) {
                     return a.name > b.name ? 1 :
                         a.name < b.name ? -1 : 0;
                 });
