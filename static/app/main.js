@@ -289,7 +289,8 @@
                         var isNew = false;
                         if (!tag.id) {
                             tag.id = methods.getTagId();
-                            isNew = true
+                            isNew = true;
+                        }
 
                         $.post(methods.url('/ajax/set-tag'), {
                             tokenHash: methods.getTokenHash(),
