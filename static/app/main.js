@@ -363,15 +363,17 @@
         },
 
         filterVideos: function (keywordText) {
-            var keywords = _.trim(keywordText).split(/\s+/);
+            var keywords = _.trim(keywordText.toLowerCase()).split(/\s+/);
 
             $els.videoList.find('.video')
                 .each(function () {
                     var $video = $(this);
                     var video = $video.data('video');
 
+                    var videoName = video.name.toLowerCase();
+
                     if (keywords.every(function (keyword) {
-                            return video.name.indexOf(keyword) != -1
+                            return videoName.indexOf(keyword) != -1
                         })) {
                         $video.attr('filter-hidden', 'false');
                     } else {
