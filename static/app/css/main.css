@@ -159,6 +159,8 @@ body {
   display: block;
   text-decoration: none;
   color: #333;
+  border-bottom: 1px #ccc solid;
+  padding-bottom: 10px;
 }
 #sidebar .tag-list .video-tag > * {
   vertical-align: middle;

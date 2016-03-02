@@ -270,7 +270,7 @@
             var self = this;
             if (!tag) {
                 tag = {
-                    timeId: player.getCurrentTimeId() || 0,
+                    timeId: player.getCurrentTimeId() - 2 || 0,
                     name: '未命名标签'
                 }
             }
@@ -402,10 +402,13 @@
         },
 
         addVideoTag: function() {
+            var currentTimeId = player.getCurrentTimeId() - 2;
+            currentTimeId = currentTimeId < 0 ? 0 : currentTimeId;
+
             if (!vars.videoKey) {
                 vex.dialog.alert('没有任何视频正在播放.');
-            } else if (vars.tagHash[player.getCurrentTimeId()]) {
-                main.openEditTag(vars.tagHash[player.getCurrentTimeId()]);
+            } else if (vars.tagHash[currentTimeId]) {
+                main.openEditTag(vars.tagHash[currentTimeId]);
             } else {
                 main.openEditTag();
             }
