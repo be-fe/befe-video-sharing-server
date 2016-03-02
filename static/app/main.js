@@ -289,8 +289,7 @@
                         var isNew = false;
                         if (!tag.id) {
                             tag.id = methods.getTagId();
-                            isNew = true;
-                        }
+                            isNew = true
 
                         $.post(methods.url('/ajax/set-tag'), {
                             tokenHash: methods.getTokenHash(),
@@ -311,7 +310,7 @@
             $('#edit-tag')
                 .on('click', '.remove-tag', function () {
                     if (tag.id) {
-                        $.post('/ajax/remove-tag', {
+                        $.post(methods.url('/ajax/remove-tag'), {
                             tokenHash: methods.getTokenHash(),
                             videoKey: vars.videoKey,
                             tagId: tag.id
