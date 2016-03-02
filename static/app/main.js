@@ -144,8 +144,6 @@
 
             var initParams = methods.parseHashParams();
 
-            $els.body.toggleClass('video-tag-shown', !!initParams.video);
-
             methods.onHashChange(function () {
                 var params = methods.parseHashParams();
 
@@ -178,6 +176,8 @@
                             jumpToTag(params.tag)
                         });
                     }
+
+                    $els.body.toggleClass('video-tag-shown', !!initParams.video);
                 } else if (params.video) {
                     jumpToTag(params.tag);
                 }
