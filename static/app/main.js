@@ -431,7 +431,7 @@
             }).on('click', '.video-tag', function (e) {
                 var $currTag = $(this);
 
-                $prevTag.removeClass('playing');
+                $prevTag && $prevTag.removeClass('playing');
                 $currTag.addClass('playing');
                 $prevTag = $currTag;
 
